@@ -38,12 +38,16 @@ class Database extends Singleton
 	 * Performs a query on the database.
 	 * 
 	 * @param 
-	 * @return 
+	 * @return An executed database statment
 	 */
 	public function query($query, $params)
 	{
 		//Make sure a database connection exists
 		$this->checkForConnection();
+
+		//If only one data value was passed in wrap it in an array
+		if(!is_array($params))
+			$params = [$params];
 
 		$statment = $this->connection->prepare($query);
 		$statment->execute($params);
