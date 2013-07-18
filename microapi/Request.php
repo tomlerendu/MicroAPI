@@ -35,7 +35,7 @@ class Request extends Singleton
 
 		//Store the path
 		$this->pathString = $_GET['_path'];
-		$this->path = explode('/', $pathString);
+		$this->path = explode('/', $this->pathString);
 	}
 
 	/**
