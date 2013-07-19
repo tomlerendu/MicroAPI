@@ -15,14 +15,14 @@
 define('MAIN_PATH', realpath(dirname(dirname(__FILE__))));
 
 /*
-	The path to the directory of your app
+	The path to the app directory
 */
 define('APP_PATH', MAIN_PATH . DIRECTORY_SEPARATOR . 'app');
 
 /*
-	The path to the directory of the MicroAPI framework
+	The path to the vendor directory
 */
-define('MICROAPI_PATH', MAIN_PATH . DIRECTORY_SEPARATOR . 'microapi');
+define('VENDOR_PATH', MAIN_PATH . DIRECTORY_SEPARATOR . 'vendor');
 
 
-require MICROAPI_PATH . DIRECTORY_SEPARATOR . '_start.php';
+require VENDOR_PATH . DIRECTORY_SEPARATOR . 'microapi' . DIRECTORY_SEPARATOR . '_start.php';

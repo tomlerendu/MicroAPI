@@ -19,6 +19,4 @@ class Controller
 		$this->response = Response::getInstance();
 		$this->database = Database::getInstance();
 	}
-
-	
 }
