@@ -7,47 +7,32 @@
 	Will eventually work by passing in an array like so
 
 	[
+		'data to validate' =>
 		[
-			'data' => 14,
-			'rules' => [
-				'numeric' => [
-					'conditions' => [1, 20.52],
-					'message' => 'The number must be between 1 and 20.52.'
-				]
-			]
-		],
-		[
-			'data' => 'Tom',
-			'rules' => [
-				'alphanumeric' => [
-					'message' => 'Your username can only contain letters and numbers'
-				],
-				'unique' => [
-					'conditions' => ['DatabaseTableName', 'ColumnName'],
-					'message' => 'This username is already taken.'
-				]
-			]
-		]
-	]
-
-	[
-		[
-			'data to validate' =>
 			[
-				[
-					'rule' => ['numeric', 23, 44],
-					'message' => 'There was an error'
-				],
-				[
-					'rule' => ['numeric', 23, 44],
-					'message' => 'There was an error'
-				],
-			]
-
+				'rule' => ['numeric', 23, 44],
+				'message' => 'There was an error'
+			],
+			[
+				'rule' => ['numeric', 23, 44],
+				'message' => 'There was an error'
+			],
+		],
+		
+		'data to validate' =>
+		[
+			[
+				'rule' => ['numeric', 23, 44],
+				'message' => 'There was an error'
+			],
+			[
+				'rule' => ['numeric', 23, 44],
+				'message' => 'There was an error'
+			],
 		]
 	]
 */
-namespace App\Helpers;
+namespace Helpers;
 
 class Validate
 {
