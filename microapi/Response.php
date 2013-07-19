@@ -17,7 +17,7 @@ class Response extends Singleton
 
 	public function error($errorNum, $responseArray, $options = [])
 	{
-		switch ($options['header']) 
+		switch($errorNum) 
 		{
 			case 404:
 				header('HTTP/1.0 404 Not Found');
