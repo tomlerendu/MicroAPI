@@ -107,6 +107,30 @@ class Database extends Singleton
 	}
 
 	/**
+	 * Performs an update query
+	 *
+	 * @return The number of rows affected by the query
+	 */ 
+	public function update($query, $params = '')
+	{
+		//Make the query
+		$query = $this->query($query, $params);
+		//Return the number of affected rows
+		return $query->rowCount();
+	}
+
+	/**
+	 * Performs an delete query
+	 *
+	 * @return The number of rows affected by the query
+	 */ 
+	public function delete($query, $params = '')
+	{
+		//Make and return the query
+		return $this->update($query, $params);
+	}
+
+	/**
 	 * Access the database object directly 
 	 *
 	 * @return The PDO database object
