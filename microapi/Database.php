@@ -50,22 +50,69 @@ class Database extends Singleton
 			$params = [$params];
 
 		$statment = $this->connection->prepare($query);
-		$statment->execute($params);
-		
+
+		//If no parameters were passed...
+		if($params == '')
+			$statment->execute();
+		else
+			$statment->execute($params);
+
 		return $statment;
 	}
 
 	/**
 	 * Performs a query and fetches the results.
+	 *
+	 * @return The results of the query
 	 */
-	public function select($query, $params, $options = [])
+	public function select($query, $params = '', $options = [])
 	{
 		//If a fetch mode was defined use it, else use the one defined in the config file
 		$fetchMode = (isset($options['fetch'])) ? $options['fetch'] : $this->config['fetch'];
 		
+		switch ($fetchMode) {
+			case 'ASSOC':
+				$fetchMode = \PDO::FETCH_ASSOC;
+				break;
+			case 'NUM':
+				$fetchMode = \PDO::FETCH_NUM;
+				break;
+			case 'OBJ':
+				$fetchMode = \PDO::FETCH_OBJ;
+				break;
+			default:
+				$fetchMode = false;
+				break;
+		}
+
+		//Make the query
 		$statment = $this->query($query, $params);
-		$results = $statment->fetchAll();
+		//Fetch the results from the database
+		$results = $statment->fetchAll($fetchMode);
 
 		return $results;
+	}
+
+	/**
+	* Performs an insert query
+	*
+	* @return The primary key of the row inserted
+	*/
+	public function insert($query, $params = '')
+	{
+		//Make the query
+		$this->query($query, $params);
+		//Return the ID of the inserted row
+		return $this->connection->lastInsertId();
+	}
+
+	/**
+	 * Access the database object directly 
+	 *
+	 * @return The PDO database object
+	 */
+	public function getConnection()
+	{
+		return (isset($this->connection)) ? $this->connection : false;
 	}
 }
