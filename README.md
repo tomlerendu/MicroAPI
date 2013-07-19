@@ -4,7 +4,7 @@ This project isn't finished and parts won't work as the documentation specifies.
 MicroAPI
 ========
 
-MicroAPI is an extremely lightweight framework for creating API's. 
+MicroAPI is an extremely lightweight PHP framework for creating API's. 
 
 Requirements
 ------------
@@ -15,6 +15,7 @@ Requirements
 
 Downloading and Installing
 --------------------------
+
 
 Structure
 ---------
@@ -39,10 +40,10 @@ Config
 
 ### Database
 
-`$config['database']['user']` - The username to connect to the database
-`$config['database']['pass']` - The password to connect to the database
-`$config['database']['host']` - The address of the MySQL database host
-`$config['database']['name']` - The name of the database you are connecting to
+`$config['database']['user']` - The username to connect to the database<br />
+`$config['database']['pass']` - The password to connect to the database<br />
+`$config['database']['host']` - The address of the MySQL database host<br />
+`$config['database']['name']` - The name of the database you are connecting to<br />
 
 If you're not planning on using a database then leave these blank.
 
@@ -64,7 +65,7 @@ Requests
 Responses
 ---------
 
-Responses are "replys" to a clients request, only one response should be sent per run.
+Responses are "replys" to a clients request, only one response should be sent per request.
 
 ### Responding
 `$this->response->make($array, $options)`
@@ -84,6 +85,19 @@ Helpers
 
 Database
 --------
+
+The database layer is built on top of PDO, it has convinience functions to make accessing the database easier.
+
+### select
+### insert
+### update
+### delete
+### query
+
+
+### Accessing PDO directly
+
+For more specific tasks you can access the PDO object directly by calling `$this->database->getConnection()`.
 
 Known issues
 ------------

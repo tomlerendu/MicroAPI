@@ -18,7 +18,6 @@ class Controller
 		$this->request = Request::getInstance();
 		$this->response = Response::getInstance();
 		$this->database = Database::getInstance();
-
 	}
 
 	
