@@ -21,10 +21,10 @@ class Database extends Singleton
 		//Attempt to make a connection to the database
 		try
 		{
-			$this->connection = new PDO(
-				'mysql:host=' . $config['host'] . ';dbname=' . $config['name'],
-				$config['user'],
-				$config['pass']
+			$this->connection = new \PDO(
+				'mysql:host=' . $this->config['host'] . ';dbname=' . $this->config['name'],
+				$this->config['user'],
+				$this->config['pass']
 			);
 		}
 		catch(Exception $e)
@@ -51,7 +51,7 @@ class Database extends Singleton
 
 		$statment = $this->connection->prepare($query);
 		$statment->execute($params);
-
+		
 		return $statment;
 	}
 
