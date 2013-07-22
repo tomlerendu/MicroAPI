@@ -34,7 +34,7 @@ class Request extends Singleton
 		array_map('htmlspecialchars', $this->params);
 
 		//Store the path
-		$this->pathString = $_GET['_path'];
+		$this->pathString = (isset($_GET['_path'])) ? $_GET['_path'] : '/';
 		$this->path = explode('/', $this->pathString);
 	}
 
