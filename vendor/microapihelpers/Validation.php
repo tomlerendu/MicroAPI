@@ -7,28 +7,19 @@
 	Will eventually work by passing in an array like so
 
 	[
-		'data to validate' =>
+
 		[
-			[
-				'rule' => ['numeric', 23, 44],
-				'message' => 'There was an error'
-			],
-			[
-				'rule' => ['numeric', 23, 44],
-				'message' => 'There was an error'
-			],
+			'data that will be validated',
+			['The number was not numeric', 'numeric', 3, 4],
+			['The number was not numeric', 'numeric', 3, 4],
+			['The number was not numeric', 'numeric', 3, 4]
 		],
 
-		'data to validate' =>
 		[
-			[
-				'rule' => ['numeric', 23, 44],
-				'message' => 'There was an error'
-			],
-			[
-				'rule' => ['numeric', 23, 44],
-				'message' => 'There was an error'
-			],
+			'data that will be validated',
+			['The number was not numeric', 'numeric', 3, 4],
+			['The number was not numeric', 'numeric', 3, 4],
+			['The number was not numeric', 'numeric', 3, 4]
 		]
 	]
 */
@@ -81,6 +72,9 @@ class Validation
 
 		switch($rule)
 		{
+			case 'equal'
+				$passedRule = self::equalRule($data, $params[0]);
+				break;
 			case 'alphanumeric':
 				$passedRule = self::alphanumericRule($data);
 				break;
@@ -107,6 +101,24 @@ class Validation
 		return $passedRule;
 	}
 
+	private static function equalRule($data, $comparisonData , $typeSafe = false)
+	{
+		if($typeSafe === false)
+			return ($data == $comparisonData);
+
+		return $data === $comparisonData;
+	}
+
+	private static function alphanumericRule($data)
+	{
+		return ctype_alnum($data);
+	}
+
+	private static function alphaRule($data)
+	{
+		return ctype_alpha($data);
+	}
+
 	private static function numericRule($data, $min = NULL, $max = NULL)
 	{
 		if(!is_numeric($data))
@@ -131,16 +143,6 @@ class Validation
 			return false;
 
 		return true;
-	}
-
-	private static function alphaRule($data)
-	{
-		return ctype_alpha($data);
-	}
-
-	private static function alphanumericRule($data)
-	{
-		return ctype_alnum($data);
 	}
 
 	private static function charsetRule($data, $charset)
