@@ -6,19 +6,24 @@ class Router
 	public function __construct($routes)
 	{
 		$request = Request::getInstance();
-
 		$foundMatch = false;
 
+		//For each user defined route
 		foreach ($routes as $route)
 		{
+			//If the method is the same as the one thats used or method doesn't matter
 			if($request->getMethod() == $route[0] || 'ALL' == $route[0])
 			{
+				//Attempt to match the path to the rotue
 				$matches = $this->matchPath($route[1], $request->getPathString());
 
+				//If the route matches
 				if($matches !== false)
 				{
+					//Create a new instance of the controller specified in the routes file
 					$class = '\App\Controllers\\' . $route[2];
 					$class = new $class();
+					//Call the method specified in the routes file
 					call_user_func_array(array($class, $route[3]), $matches);
 
 					$foundMatch = true;
@@ -37,7 +42,7 @@ class Router
 	/**
 	 * Checks if a route matches a path
 	 *
-	 * @return True if the route matches the path, false if it doesn't
+	 * @return The values of the wildcards if the route matches the path, false if it doesn't
 	 */
 	public function matchPath($route, $path)
 	{
