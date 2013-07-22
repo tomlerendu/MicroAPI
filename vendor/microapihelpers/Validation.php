@@ -1,5 +1,4 @@
 <?php
-
 /*
 
 	NOT FINISHED
@@ -23,6 +22,7 @@
 		]
 	]
 */
+
 namespace MicroAPIHelpers;
 
 class Validation
@@ -33,31 +33,22 @@ class Validation
 		$errors = [];
 
 		//For each piece of data
-		foreach($validation as $data => $rules)
+		foreach($validation as $item)
 		{
-			//For each rule applied to the data
-			foreach($rules as $item)
-			{
-				$ruleType;
-				$ruleParams;
+			//Set the data and remove it from the array
+			$data = $item[0];
+			unset($item[0]);
 
-				//If the rule has conditions to be met
-				if(is_array($item['rule']))
-				{
-					$ruleType = $item['rule'][0];
-					$ruleParams = array_splice($item['rule'], 1);
-				}
-				//If the rule has no conditions to be met
-				else
-				{
-					$ruleType = $item['rule'];
-					$ruleParams = NULL;
-				}
+			//For each rule applied to the data
+			foreach($item as $rule)
+			{
+				$ruleType = $rule[1];
+				$ruleParams = array_slice($rule, 2);
 
 				//Perform the validation
 				if(!self::doRule($data, $ruleType, $ruleParams))
 					//If the validation failed add the message to the errors array
-					$errors[] = $item['message'];
+					$errors[] = $rule[0];
 			}
 		}
 
@@ -66,13 +57,11 @@ class Validation
 
 	private static function doRule($data, $rule, $params)
 	{
-		var_dump($data, $rule, $params);
-
 		$passedRule;
 
 		switch($rule)
 		{
-			case 'equal'
+			case 'equal':
 				$passedRule = self::equalRule($data, $params[0]);
 				break;
 			case 'alphanumeric':
@@ -82,17 +71,19 @@ class Validation
 				$passedRule = self::alphaRule($data);
 				break;
 			case 'numeric':
-				$passedRule = call_user_func_array('self::numericRule', array_merge($data, $params));
+				$passedRule = call_user_func_array('self::numericRule', array_merge([$data], $params));
 				break;
 			case 'integer':
-				$passedRule = call_user_func_array('self::integerRule', array_merge($data, $params));
+				$passedRule = call_user_func_array('self::integerRule', array_merge([$data], $params));
 				break;
 			case 'charset':
 				$passedRule = self::charsetRule($data, $item['rules']['charset']);
 				break;
 			case 'length':
+				$passedRule = self::lengthRule($data, $params[0], $params[1]);
 				break;
 			case 'regex':
+				$passedRule = self::regexRule($data, $params[0]);
 				break;
 			case 'unique':
 				break;
@@ -106,7 +97,7 @@ class Validation
 		if($typeSafe === false)
 			return ($data == $comparisonData);
 
-		return $data === $comparisonData;
+		return ($data === $comparisonData);
 	}
 
 	private static function alphanumericRule($data)
@@ -123,8 +114,6 @@ class Validation
 	{
 		if(!is_numeric($data))
 			return false;
-
-		$data = (int) $data;
 
 		if($data < $min || $data > $max)
 			return false;
@@ -145,9 +134,28 @@ class Validation
 		return true;
 	}
 
-	private static function charsetRule($data, $charset)
+	private static function charsetRule($data, $charset, $caseSensitive = true)
 	{
+		//If case doesn't matter then make everything lowercase
+		if($caseSensitive === false)
+		{
+			$data = strtolower($data);
+			$charset = strtolower($charset);
+		}
 
+		//Avoid an O(n^2) situation
+		$charsetMap = [];
+		for($i=0; $i<strlen($charset); $i++)
+			$charsetMap[$charset[$i]] = true;
+
+		//Check each character
+		for($i=0; $i<strlen($data); $i++)
+		{
+			if($charsetMap[$data[$i]] !== true)
+				return false;
+		}
+
+		return true;
 	}
 
 	private static function lengthRule($data, $min = NULL, $max = NULL)
