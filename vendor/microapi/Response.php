@@ -66,7 +66,8 @@ class Response extends Singleton
 
 	private function xml($responseArray)
 	{
+		//TODO XML SUPPORT
 		header('Content-type: text/xml');
-		//TODO xml support
+		echo '<?xml version="1.0"?>';		
 	}
 }
