@@ -23,4 +23,4 @@ $config['database']['fetch'] = 'ARRAY';
 	JSON, XML or CSV
 */
 
-$config['response']['format'] = 'JSON';
+$config['response']['format'] = '\MicroApi\Response\JsonResponse';
