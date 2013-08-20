@@ -6,7 +6,9 @@ class Request extends Singleton
 	private $method;
 	private $params;
 	private $path;
-	private $pathString;
+	private $pathSections;
+	private $userAgent;
+	private $ipAddress;
 
 	protected function __construct()
 	{
@@ -31,11 +33,16 @@ class Request extends Singleton
 				parse_str(file_get_contents('php://input'), $this->params);
 				break;
 		}
-		array_map('htmlspecialchars', $this->params);
 
 		//Store the path
-		$this->pathString = (isset($_GET['_path'])) ? $_GET['_path'] : '/';
-		$this->path = explode('/', $this->pathString);
+		$this->path = (isset($_GET['_path'])) ? $_GET['_path'] : '/';
+		$this->pathSections = explode('/', $this->path);
+
+		//Store the useragent
+		$this->userAgent = $_SERVER['HTTP_USER_AGENT'];
+
+		//Store the ip address
+		$this->ipAddress = $_SERVER['REMOTE_ADDR'];
 	}
 
 	/**
@@ -49,21 +56,44 @@ class Request extends Singleton
 	}
 
 	/**
-	 * Provides a way of accessing the request parameters 
+	 * The parameters sent with the request. GET, POST, PUT or DELETE.
 	 *
+	 * @return The parameters send with the request.
 	 */
 	public function getParam($var)
 	{
 		return (isset($this->data[$var])) ? $this->data[$var] : false;
 	}
 
+	/**
+	 *
+	 */
 	public function getPath()
 	{
 		return $this->path;
 	}
 
-	public function getPathString()
+	/**
+	 *
+	 */
+	public function getPathSections()
 	{
-		return $this->pathString;
+		return $this->pathSections;
+	}
+
+	/**
+	 *
+	 */
+	public function getUserAgent()
+	{
+		return $this->userAgent;
+	}
+
+	/**
+	 *
+	 */
+	public function getIpAddress()
+	{
+		return $this->ipAddress;
 	}
 }

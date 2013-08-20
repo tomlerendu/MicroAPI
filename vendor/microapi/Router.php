@@ -15,7 +15,7 @@ class Router
 			if($request->getMethod() == $route[0] || 'ALL' == $route[0])
 			{
 				//Attempt to match the path to the rotue
-				$matches = $this->matchPath($route[1], $request->getPathString());
+				$matches = $this->matchPath($route[1], $request->getPath());
 
 				//If the route matches
 				if($matches !== false)
