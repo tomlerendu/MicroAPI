@@ -8,66 +8,71 @@ class Response extends Singleton
 		//Possible options..
 
 		if(isset($options['header']))
-			header($options['header']);
+			$this->setHeaders($options['header']);
 
 		if(isset($options['cache']))
 		{
 			$ttl = gmdate('D, d M Y H:i:s', time() + $options['cache']) . ' GMT';
-			header('Expires: ' . $ttl);
-			header('Pragma: cache');
-			header('Cache-Control: max-age=' . $options['cache']);
+			$this->setHeaders([
+				'Expires: ' . $ttl,
+				'Pragma: cache',
+				'Cache-Control: max-age=' . $options['cache']
+			]);
 		}
 
-		//Figure out what format should be used
-		$format = (isset($options['format'])) ? $options['format'] : $this->config['format'];
-		$format = strtolower($format);
-		call_user_func_array([$this, $format], [$responseArray]);
+		$responseMaker = (isset($options['format'])) ? $options['format'] : $this->config['format'];
+		$responseMaker = new $responseMaker($responseArray);
+
+		$this->setHeaders($responseMaker->getHeaders());
+		echo $responseMaker->getResponse();
 	}
 
 	public function error($error, $responseArray, $options = [])
 	{
-		//If the error was given as a number
+		//If the error is a number
 		if(is_numeric($error))
-		{
-			switch($error) 
-			{
-				case 400:
-					header('HTTP/1.0 400 Bad Request');
-					break;
-				case 401:
-					header('HTTP/1.0 401 Unauthorized');
-					break;
-				case 404:
-					header('HTTP/1.0 404 Not Found');
-					break;
-				case 500:
-					header('HTTP/1.0 500 Internal Server Error');
-					break;
-				case 502:
-					header('HTTP/1.0 502 Bad Gateway');
-					break;
-				case 503:
-					header('HTTP/1.0 503 Service Unavailable');
-					break;
-			}
-		}
-		else
-			header($error);
+			$error = $this->getHttpString($error);
+		
+		$this->setHeaders($error);
 
 		//Make the response
 		$this->make($responseArray, $options);
 	}
 
-	private function json($responseArray)
+	public function redirect($to, $options = [])
 	{
-		header('Content-type: application/json');
-		echo json_encode($responseArray);
+		$this->setHeaders('Location: ' . $to);
 	}
 
-	private function xml($responseArray)
+	private function setHeaders($headers)
 	{
-		//TODO XML SUPPORT
-		header('Content-type: text/xml');
-		echo '<?xml version="1.0"?>';		
+		if(!is_array($headers))
+			header($headers);
+		else
+		{
+			foreach($headers as $header)
+				header($header);
+		}
+	}
+
+	private function getHttpString($code)
+	{
+		switch($code) 
+		{
+			case 400:
+				return 'HTTP/1.0 400 Bad Request';
+			case 401:
+				return 'HTTP/1.0 401 Unauthorized';
+			case 404:
+				return 'HTTP/1.0 404 Not Found';
+			case 500:
+				return 'HTTP/1.0 500 Internal Server Error';
+			case 502:
+				return 'HTTP/1.0 502 Bad Gateway';
+			case 503:
+				return 'HTTP/1.0 503 Service Unavailable';
+		}
+
+		return '';
 	}
 }
