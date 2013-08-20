@@ -18,9 +18,7 @@ class XmlResponse implements ResponseInterface
 	public function getResponse()
 	{
 		$xmlString = '<?xml version="1.0"?><root>';
-
 		$this->walkArray($xmlString, $this->responseArray);
-
 		$xmlString .= '</root>';
 
 		return $xmlString;
@@ -39,8 +37,7 @@ class XmlResponse implements ResponseInterface
 			$xmlString .= '<' . $key . '>';
 
 			if(is_array($item))
-				$xmlString .= '';
-				//make another call to walkArray
+				$this->walkArray($xmlString, $item);
 			else
 				$xmlString .= $item;
 
