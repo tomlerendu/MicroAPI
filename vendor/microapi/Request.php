@@ -6,7 +6,6 @@ class Request extends Singleton
 	private $method;
 	private $params;
 	private $path;
-	private $pathSections;
 	private $userAgent;
 	private $ipAddress;
 
@@ -36,7 +35,6 @@ class Request extends Singleton
 
 		//Store the path
 		$this->path = (isset($_GET['_path'])) ? $_GET['_path'] : '/';
-		$this->pathSections = explode('/', $this->path);
 
 		//Store the useragent
 		$this->userAgent = $_SERVER['HTTP_USER_AGENT'];
@@ -78,7 +76,7 @@ class Request extends Singleton
 	 */
 	public function getPathSections()
 	{
-		return $this->pathSections;
+		return explode('/', $this->path);
 	}
 
 	/**
