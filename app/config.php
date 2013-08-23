@@ -1,26 +1,33 @@
 <?php
+return [
 
-/*
-	Database
-	--------
+	/*
+		Database
+		--------
 
-	Currently only supports MYSQL 
-*/
+		Currently only supports MYSQL 
+	*/
 
-$config['database']['user'] = '';
-$config['database']['pass'] = '';
-$config['database']['name'] = '';
-$config['database']['host'] = '';
+	'database' => [
+		'user' => 'root',
+		'pass' => '',
+		'name' => '',
+		'host' => 'localhost',
 
-//Default fetch format - Array or object
-$config['database']['fetch'] = 'ARRAY';
+		'fetch' => 'ASSOC'
+	],
 
-/*
-	Response
-	--------
 
-	The default response from the server if none was defined.
-	JSON, XML or CSV
-*/
+	/*
+		Response
+		--------
 
-$config['response']['format'] = '\MicroApi\Response\JsonResponse';
+		The default response from the server if none was defined.
+		JSON OR XML
+	*/
+
+	'response' => [
+		'format' => '\MicroAPI\Response\JsonResponse'
+	]
+
+];

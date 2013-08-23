@@ -33,19 +33,23 @@ function autoload($className)
 
 spl_autoload_register('autoload');
 
-//Load the config
-require APP_PATH . DIRECTORY_SEPARATOR . 'config.php';
+/*
+    Load the config file
+*/
 
-//Pass config variables to the clases
+$config = require APP_PATH . DIRECTORY_SEPARATOR . 'config.php';
+
 \MicroAPI\Database::getInstance()->setConfig($config['database']);
 \MicroAPI\Response::getInstance()->setConfig($config['response']);
 
-//Load the routes
-require APP_PATH . DIRECTORY_SEPARATOR . 'routes.php';
+/*
+    Load the map
+*/
 
-//If no routes were set just use an empty array
-if(!isset($routes))
-    $routes = [];
+$routes = require APP_PATH . DIRECTORY_SEPARATOR . 'routes.php';
 
-//Create a router with the routes
+/*
+    Create the router
+*/
+
 new \MicroAPI\Router($routes);
