@@ -27,7 +27,7 @@ class Response extends Singleton
 		echo $responseMaker->getResponse();
 	}
 
-	public function error($error, $responseArray, $options = [])
+	public function error($error, $responseArray = [], $options = [])
 	{
 		//If the error is a number
 		if(is_numeric($error))
