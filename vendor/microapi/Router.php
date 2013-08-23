@@ -6,82 +6,135 @@ class Router
 	public function __construct($routes)
 	{
 		$request = Request::getInstance();
-		$foundMatch = false;
+		$match = false;
 
-		//For each user defined route
-		foreach ($routes as $route)
+		//For each controller
+		foreach($routes as $controller => $rules)
 		{
-			//If the method is the same as the one thats used or method doesn't matter
-			if($request->getMethod() == $route[0] || 'ALL' == $route[0])
+			//If a single path was given
+			if(!is_array($rules))
+				$rules = ['path'=>$rules];
+
+			//If short hand [path, method] was given
+			//Check if the array is not an assoc array
+			if(array_key_exists(0, $rules) && array_key_exists(1, $rules))
+				$rules = ['path'=>$rules[0], 'method'=>$rules[1]];
+
+			$match = $this->processRules($rules, $request);
+
+			if($match !== false)
 			{
-				//Attempt to match the path to the rotue
-				$matches = $this->matchPath($route[1], $request->getPath());
-
-				//If the route matches
-				if($matches !== false)
-				{
-					//Create a new instance of the controller specified in the routes file
-					$class = '\App\Controllers\\' . $route[2];
-					$class = new $class();
-					//Call the method specified in the routes file
-					call_user_func_array(array($class, $route[3]), $matches);
-
-					$foundMatch = true;
-					break;
-				}
+				//Create the controller
+				$controller = explode('@', $controller);
+				$controllerName = '\App\Controllers\\' . $controller[0];
+				$controllerMethod = $controller[1];
+				$controller = new $controllerName();
+				call_user_func_array([$controller,$controllerMethod], $match);
+				//Break the loop as a suitable controller was found
+				break;
 			}
 		}
 
-		if(!$foundMatch)
+		//If no matches were found
+		if($match === false)
+			Response::getInstance()->error(404);
+	}
+
+	public function processRules($rules, $request)
+	{
+		//The wildcards to be returned
+		$wildcards = [];
+
+		foreach($rules as $ruleType => $ruleValue)
 		{
-			//TODO implement proper 404 and default 404 behaviour in config file
-			Response::getInstance()->error(404, []);
+			$rulePassed;
+
+			switch($ruleType) 
+			{
+				case 'path':
+					$rulePassed = $this->matchPath($ruleValue, $request->getPath());
+					break;
+				case 'method':
+					$rulePassed = $this->matchMethod($ruleValue, $request->getMethod());
+					break;
+			}
+
+			//If the rule failed
+			if($rulePassed === false)
+				return false;
+			//If the rule passed
+			else
+			{
+				//For each new wildcard found
+				foreach($rulePassed as $item)
+					//Add it to the wildcards array
+					$wildcards[] = $item;
+			}
 		}
+
+		return $wildcards;
 	}
 
 	/**
-	 * Checks if a route matches a path
 	 *
-	 * @return The values of the wildcards if the route matches the path, false if it doesn't
+	 *
 	 */
-	public function matchPath($route, $path)
+	private function matchMethod($method, $requestMethod)
 	{
-		$route = explode('/', trim($route, '/'));
+		if(strtolower($method) == strtolower($requestMethod))
+			return [];
+
+		return false;
+	}
+
+	/**
+	 * Checks if a predefined path matches the requested path
+	 *
+	 * @param $path
+	 * @param $requestPath
+	 *
+	 * @return The values of the wildcards if the path is matched, false if it doesn't
+	 */
+	private function matchPath($path, $requestPath)
+	{
 		$path = explode('/', trim($path, '/'));
+		$requestPath = explode('/', trim($requestPath, '/'));
+		
+		$params = [];
 
 		//If the route and path don't have the same number of sections
-		if(count($route) !== count($path))
+		if(count($path) !== count($requestPath))
 			return false;
 
 		//For each route and path
-		for($i=0; $i<count($route); $i++)
+		for($i=0; $i<count($path); $i++)
 		{
 			//Find out if there's a wildcard in the section
-			$wildcard = strpos($route[$i], '(?)');
+			$wildcard = strpos($path[$i], '(?)');
 
 			//If there is and its on its own
-			if($wildcard !== false && strlen($route[$i]) === 3)
+			if($wildcard !== false && strlen($path[$i]) === 3)
 			{
-				$params[] = $path[$i];
+				$params[] = $requestPath[$i];
 			}
 			//If there is and its bordered by other characters 
 			else if($wildcard !== false)
 			{
 				if(
-					substr($route[$i], 0, $wildcard) == substr($path[$i], 0, $wildcard) &&
-					substr($path[$i], -strlen(substr($route[$i], $wildcard+3))) == substr($route[$i], $wildcard+3)
+					substr($path[$i], 0, $wildcard) == substr($requestPath[$i], 0, $wildcard) &&
+					substr($requestPath[$i], -strlen(substr($path[$i], $wildcard+3))) == substr($path[$i], $wildcard+3)
 				)
 				{
-					$routeParts = explode('(?)', $route[$i]);
-					$param = substr($path[$i], strlen($routeParts[0]));
+					$routeParts = explode('(?)', $path[$i]);
+					$param = substr($requestPath[$i], strlen($routeParts[0]));
 					$param = substr($param, 0, -strlen($routeParts[1]));
 					$params[] = $param;
 				}
-				else if ($route[$i] != '(?)')
+				else if ($path[$i] != '(?)')
 					return false;
 			}
 			//If there's no wildcard make sure the route and path section match
-			else if($route[$i] != $path[$i])
+			else if($path[$i] != $requestPath[$i])
 				return false;
 		}
 
