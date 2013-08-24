@@ -18,6 +18,12 @@ $config = require APP_PATH . DIRECTORY_SEPARATOR . 'config.php';
 \MicroAPI\Response::getInstance()->setConfig($config['response']);
 
 /*
+	Add namespaces to the autoloader
+*/
+
+$autoloader->addNamespaces($config['autoloader']);
+
+/*
     Create the router passing the routes to the constructor
 */
 
