@@ -22,7 +22,7 @@ define('APP_PATH', MAIN_PATH . DIRECTORY_SEPARATOR . 'app');
 /*
 	The path to the vendor directory
 */
-define('VENDOR_PATH', MAIN_PATH . DIRECTORY_SEPARATOR . 'vendor');
+define('MICROAPI_PATH', MAIN_PATH . DIRECTORY_SEPARATOR . 'microapi');
 
 
-require VENDOR_PATH . DIRECTORY_SEPARATOR . 'microapi' . DIRECTORY_SEPARATOR . '_start.php';
+require MICROAPI_PATH . DIRECTORY_SEPARATOR . '_start.php';
