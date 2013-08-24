@@ -39,8 +39,8 @@ class Request extends Singleton
 		//Store the useragent
 		$this->userAgent = $_SERVER['HTTP_USER_AGENT'];
 
-		//Store the ip address
-		$this->ipAddress = $_SERVER['REMOTE_ADDR'];
+		//Store the ip address, store localhost as ipv4 rather than 6
+		$this->ipAddress = ($_SERVER['REMOTE_ADDR'] == '::1') ? '127.0.0.1' : $_SERVER['REMOTE_ADDR'];
 	}
 
 	/**
