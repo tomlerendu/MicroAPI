@@ -2,7 +2,7 @@
 return [
 	
 	/*
-	    Autoloader
+		Autoloader
 	    ----------
 	    Define any prefixes that should be added to the PSR-4 autoloader for external
 	    libraries. The format 'prefix' => '/location/on/filesystem/' should be used.
@@ -38,7 +38,8 @@ return [
 	*/
 
 	'response' => [
-		'format' => '\MicroAPI\Response\JsonResponse'
+		'format' => '\MicroAPI\Response\JsonResponse',
+		'cache' => 0
 	]
 
 ];

@@ -5,18 +5,19 @@ class Response extends Singleton
 {
 	public function make($responseArray, $options = [])
 	{
-		//Possible options..
-
+		//Set any custom headers
 		if(isset($options['header']))
 			$this->setHeaders($options['header']);
 
-		if(isset($options['cache']))
+		//Set the cache time
+		$cacheTime = isset($this->config['chache']) ? $this->config['cache'] : $options['cache'];
+		if($cacheTime !== 0)
 		{
-			$ttl = gmdate('D, d M Y H:i:s', time() + $options['cache']) . ' GMT';
+			$ttl = gmdate('D, d M Y H:i:s', time() + $cacheTime) . ' GMT';
 			$this->setHeaders([
 				'Expires: ' . $ttl,
 				'Pragma: cache',
-				'Cache-Control: max-age=' . $options['cache']
+				'Cache-Control: max-age=' . $cacheTime
 			]);
 		}
 
@@ -35,8 +36,9 @@ class Response extends Singleton
 		
 		$this->setHeaders($error);
 
-		//Make the response
-		$this->make($responseArray, $options);
+		//Make the response if one was passed
+		if(count($responseArray) !== 0)
+			$this->make($responseArray, $options);
 	}
 
 	public function redirect($to, $options = [])
