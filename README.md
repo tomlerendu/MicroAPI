@@ -20,36 +20,42 @@ Downloading and Installing
 Structure
 ---------
 
-A MicroAPI application by default has the following structure.
+### File system
+
+A MicroAPI application by default has the following structure. 
 
 - app
   - controllers
   - models
-  - helpers
 - microapi
 - public
 
-The app directory is where you write your application. It holds config, routes, controllers, models and helpers.
+The directory structure can be changed by editing the constants `MICROAPI_PATH` and `APP_PATH` in `public/index.php` then moving the directories to their corresponding locations. It is advisable to keep code out of the public directory. 
 
-The microapi directory contains the framework.
+All application code should be stored in the app directory. 
 
-The public directory is where the requests are made.
+The microapi directory contains the framework. If there are multiple websites using MicroAPI on the same system they can share one copy of it. 
+
+The public directory is where the requests enter the framework. 
+
+### Namespaces and autoloading
+
+MicroAPI follows the PSR-4 standard for autoloading classes.
 
 Config
 ------
 
+### Autoloader
+
+
+
 ### Database
 
-`$config['database']['user']` - The username to connect to the database<br />
-`$config['database']['pass']` - The password to connect to the database<br />
-`$config['database']['host']` - The address of the MySQL database host<br />
-`$config['database']['name']` - The name of the database you are connecting to<br />
-
-If you're not planning on using a database then leave these blank.
+Currently MicroAPI only supports MySQL although this will change in the future
 
 ### Response
 
-`$config['response']['format']`
+
 
 Routing
 -------
@@ -59,13 +65,37 @@ Routes for your application are defined in the /app/routes.php file.
 Controllers
 -----------
 
+There is one controller per request. For convenience controllers have references to the request, response and database objects.
+
+<table>
+	<tr>
+		<th>Class</th>
+		<th>Reference</th>
+	</tr>
+	<tr>
+		<td>Request</td>
+		<td>`$this->request`</td>
+	</tr>
+	<tr>
+		<td>Response</td>
+		<td>`$this->response`</td>
+	</tr>
+	<tr>
+		<td>Database</td>
+		<td>`$this->database`</td>
+	</tr>
+</table> 
+
 Requests
 --------
+
+The request object is a representation of the request the user made.
+
 
 Responses
 ---------
 
-Responses are "replys" to a clients request, only one response should be sent per request.
+Responses are "replies" to a clients request, only one response should be sent per request.
 
 ### Responding
 `$this->response->make($array, $options)`
@@ -79,9 +109,6 @@ Both the `make` and `error` methods take an optional `$options` parameter.
 
 Models
 ------
-
-Helpers
--------
 
 Database
 --------
@@ -97,7 +124,10 @@ The database layer is built on top of PDO, it has convinience functions to make 
 
 ### Accessing PDO directly
 
-For more specific tasks you can access the PDO object directly by calling `$this->database->getConnection()`.
+For more specific tasks you can access the database directly by calling `getConnection()` which returns the PDO object.
 
 Known issues
 ------------
+
+- A controller and method combination cannot be added to the routes file more than once
+- Models implementation is not finished
