@@ -10,7 +10,7 @@ class Response extends Singleton
 			$this->setHeaders($options['header']);
 
 		//Set the cache time
-		$cacheTime = isset($this->config['chache']) ? $this->config['cache'] : $options['cache'];
+		$cacheTime = isset($options['chache']) ? $options['chache'] : $this->config['cache'];
 		if($cacheTime !== 0)
 		{
 			$ttl = gmdate('D, d M Y H:i:s', time() + $cacheTime) . ' GMT';
