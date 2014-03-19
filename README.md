@@ -51,7 +51,7 @@ Config
 
 ### Database
 
-Currently MicroAPI only supports MySQL although this will change in the future
+Currently MicroAPI only supports MySQL although this will change in the future.
 
 ### Response
 
@@ -61,6 +61,8 @@ Routing
 -------
 
 Routes for your application are defined in the /app/routes.php file.
+
+
 
 Controllers
 -----------
@@ -74,15 +76,15 @@ There is one controller per request. For convenience controllers have references
 	</tr>
 	<tr>
 		<td>Request</td>
-		<td>`$this->request`</td>
+		<td>$this->request</td>
 	</tr>
 	<tr>
 		<td>Response</td>
-		<td>`$this->response`</td>
+		<td>$this->response</td>
 	</tr>
 	<tr>
 		<td>Database</td>
-		<td>`$this->database`</td>
+		<td>$this->database</td>
 	</tr>
 </table> 
 
