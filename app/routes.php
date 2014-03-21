@@ -1,6 +1,6 @@
 <?php
 return [
 
-	'Example@getName' => ['/name/(?)/', 'GET']
+	['Example@getName', '/name/(?)/', 'GET']
 
 ];

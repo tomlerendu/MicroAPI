@@ -9,8 +9,11 @@ class Router
 		$match = false;
 		
 		//For each controller
-		foreach($routes as $controller => $rules)
+		foreach($routes as $route)
 		{
+			$controller = $route[0];
+			$rules = array_splice($route, count($route)-2);
+
 			//If a single path was given
 			if(!is_array($rules))
 				$rules = ['path'=>$rules];
@@ -26,10 +29,10 @@ class Router
 			{
 				//Create the controller
 				$controller = explode('@', $controller);
-				$controllerName = '\App\Controllers\\' . $controller[0];
+				$controllerName = '\\App\\Controllers\\' . $controller[0];
 				$controllerMethod = $controller[1];
 				$controller = new $controllerName();
-				call_user_func_array([$controller,$controllerMethod], $match);
+				call_user_func_array([$controller, $controllerMethod], $match);
 				//Break the loop as a suitable controller was found
 				break;
 			}
