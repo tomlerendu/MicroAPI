@@ -39,7 +39,9 @@ return [
 
 	'response' => [
 		'format' => '\MicroAPI\Response\JsonResponse',
-		'cache' => 0
+		'cache' => 0,
+		'headers' => [
+		]
 	]
 
 ];

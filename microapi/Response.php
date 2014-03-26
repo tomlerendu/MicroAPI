@@ -5,6 +5,9 @@ class Response extends Singleton
 {
 	public function make($responseArray, $options = [])
 	{
+		//Set any defualt headers
+		if(count($this->config['headers']) != 0)
+			$this->setHeaders($this->config['headers']);
 		//Set any custom headers
 		if(isset($options['header']))
 			$this->setHeaders($options['header']);
