@@ -7,7 +7,6 @@ class Request extends Singleton
 	private $params;
 	private $path;
 	private $userAgent;
-	private $ipAddress;
 
 	protected function __construct()
 	{
@@ -17,20 +16,16 @@ class Request extends Singleton
 		//Store the data for each request type into the $this->params variable
 		switch($this->method)
 		{
-			case 'GET':
-				$this->params = $_GET;
-				//Remove the path
-				unset($this->params['_path']);
-				break;
-			case 'POST':
-				$this->params = $_POST;
-				break;
-			case 'PUT':
-				parse_str(file_get_contents('php://input'), $this->params);
-				break;
-			case 'DELETE':
-				parse_str(file_get_contents('php://input'), $this->params);
-				break;
+			case 'GET':     $this->params = $_GET;
+                            //Remove the path
+                            unset($this->params['_path']);
+                            break;
+			case 'POST':    $this->params = $_POST;
+                            break;
+			case 'PUT':     parse_str(file_get_contents('php://input'), $this->params);
+                            break;
+			case 'DELETE':  parse_str(file_get_contents('php://input'), $this->params);
+				            break;
 		}
 
 		//Store the path
@@ -38,9 +33,6 @@ class Request extends Singleton
 
 		//Store the useragent
 		$this->userAgent = $_SERVER['HTTP_USER_AGENT'];
-
-		//Store the ip address, store localhost as ipv4 rather than 6
-		$this->ipAddress = ($_SERVER['REMOTE_ADDR'] == '::1') ? '127.0.0.1' : $_SERVER['REMOTE_ADDR'];
 	}
 
 	/**
@@ -85,13 +77,5 @@ class Request extends Singleton
 	public function getUserAgent()
 	{
 		return $this->userAgent;
-	}
-
-	/**
-	 *
-	 */
-	public function getIpAddress()
-	{
-		return $this->ipAddress;
 	}
 }
