@@ -3,8 +3,9 @@ namespace MicroAPI;
 
 class Router
 {
-	public function __construct($routes)
+	public function __construct()
 	{
+        /**
 		$request = Request::getInstance();
 		$match = false;
 		
@@ -41,9 +42,31 @@ class Router
 		//If no matches were found
 		if($match === false)
 			Response::getInstance()->error(404);
+
+         */
 	}
 
-	public function processRules($rules, $request)
+    public function get($route, $method)
+    {
+
+    }
+
+    public function post($route, $method)
+    {
+
+    }
+
+    public function put($route, $method)
+    {
+
+    }
+
+    public function delete($route, $method)
+    {
+        
+    }
+
+	private function processRules($rules, $request)
 	{
 		//The wildcards to be returned
 		$wildcards = [];
@@ -60,8 +83,6 @@ class Router
 				case 'method':
 					$rulePassed = $this->matchMethod($ruleValue, $request->getMethod());
 					break;
-				case 'ip':
-					$rulePassed = $this->matchIp($ruleValue, $request->getIpAddress());
 			}
 
 			//If the rule failed
@@ -82,34 +103,6 @@ class Router
 
 	/**
 	 * 
-	 *
-	 * @param $ip
-	 * @param $requestIp
-	 * 
-	 * @return The values of the wildcards if the method is matched, false if it doesn't
-	 */
-	private function matchIp($ip, $requestIp)
-	{
-		$ipV4 = (stripos($ip, ':') === false);
-		$requestIpV4 = (stripos($requestIp, ':') === false);
-
-		//If one is ip v4 and one is v6
-		if($ipV4 !== $requestIpV4)
-			return false;
-		//If they are both ip v4
-		else if($ipV4)
-			return $this->matchWildcards($ip, $requestIp, '.');
-		//If they are both ip v6
-		else
-		{
-			$ip = inet_ntop(inet_pton($ip));
-			$requestIp = inet_ntop(inet_pton($requestIp));
-			return $this->matchWildcards($ip, $requestIp, ':');
-		}
-	}
-
-	/**
-	 * 
 	 */
 	private function matchMethod($method, $requestMethod)
 	{
@@ -119,15 +112,13 @@ class Router
 		return false;
 	}
 
-	/**
-	 * Checks if a predefined path matches the requested path
-	 *
-	 * @param $path 
-	 * @param $requestPath
-	 *
-	 * @return The values of the wildcards if the path is matched, false if it doesn't
-	 */
-	private function matchWildcards($pattern, $subject, $delimiter = false)
+    /**
+     * @param $pattern
+     * @param $subject
+     * @param bool $delimiter
+     * @return array|bool
+     */
+    private function matchWildcards($pattern, $subject, $delimiter = false)
 	{
 		if($delimiter !== false)
 		{

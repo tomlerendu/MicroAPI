@@ -17,8 +17,6 @@ class Request extends Singleton
 		switch($this->method)
 		{
 			case 'GET':     $this->params = $_GET;
-                            //Remove the path
-                            unset($this->params['_path']);
                             break;
 			case 'POST':    $this->params = $_POST;
                             break;
@@ -29,7 +27,7 @@ class Request extends Singleton
 		}
 
 		//Store the path
-		$this->path = (isset($_GET['_path'])) ? $_GET['_path'] : '/';
+		$this->path = $_SERVER['REQUEST_URI'];
 
 		//Store the useragent
 		$this->userAgent = $_SERVER['HTTP_USER_AGENT'];

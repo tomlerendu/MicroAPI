@@ -1,9 +1,21 @@
 <?php
 return [
-	
+
+    /*
+        Sub folder
+        ----------
+
+        If the app is not at the root of the domain specify the sub folder it is located in.
+        EG: for website.com/api/public would be /api/public.
+
+     */
+
+    'subfolder' => '/MicroAPI/public',
+
 	/*
 		Autoloader
 	    ----------
+
 	    Define any prefixes that should be added to the PSR-4 autoloader for external
 	    libraries. The format 'prefix' => '/location/on/filesystem/' should be used.
 	*/
