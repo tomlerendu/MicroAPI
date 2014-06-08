@@ -3,6 +3,8 @@ namespace MicroAPI;
 
 class Router
 {
+    private $routes = [];
+
 	public function __construct()
 	{
         /**
@@ -46,22 +48,32 @@ class Router
          */
 	}
 
-    public function get($route, $method)
+    public function any($route, $method, $requirement)
     {
-
+        $this->route('any', $route, $method, $requirement);
     }
 
-    public function post($route, $method)
+    public function get($route, $method, $requirement)
     {
-
+        $this->route('get', $route, $method, $requirement);
     }
 
-    public function put($route, $method)
+    public function post($route, $method, $requirement)
     {
-
+        $this->route('post', $route, $method, $requirement);
     }
 
-    public function delete($route, $method)
+    public function put($route, $method, $requirement)
+    {
+        $this->route('put', $route, $method, $requirement);
+    }
+
+    public function delete($route, $method, $requirement)
+    {
+        $this->route('delete', $route, $method, $requirement);
+    }
+
+    private function route($httpMethod, $route, $method, $requirement)
     {
         
     }
@@ -118,7 +130,7 @@ class Router
      * @param bool $delimiter
      * @return array|bool
      */
-    private function matchWildcards($pattern, $subject, $delimiter = false)
+    private function matchRoute($pattern, $subject, $delimiter=false)
 	{
 		if($delimiter !== false)
 		{
@@ -128,7 +140,7 @@ class Router
 
 		$params = [];
 
-		//If the route and path don't have the same number of sections
+		//If the route and request path don't have the same number of sections
 		if(count($pattern) !== count($subject))
 			return false;
 
