@@ -1,7 +1,7 @@
 <?php
 namespace App\Controller;
 
-class Example extends \MicroAPI\Controller
+class Example
 {
 	public function getName($name)
 	{
