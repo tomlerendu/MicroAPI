@@ -29,7 +29,7 @@ class Router
 			{
 				//Create the controller
 				$controller = explode('@', $controller);
-				$controllerName = '\\App\\Controllers\\' . $controller[0];
+				$controllerName = '\\App\\Controller\\' . $controller[0];
 				$controllerMethod = $controller[1];
 				$controller = new $controllerName();
 				call_user_func_array([$controller, $controllerMethod], $match);

@@ -15,9 +15,9 @@
 define('MAIN_PATH', realpath(dirname(dirname(__FILE__))));
 
 /*
-	The path to the app directory
+	The path to the App directory
 */
-define('APP_PATH', MAIN_PATH . DIRECTORY_SEPARATOR . 'app');
+define('APP_PATH', MAIN_PATH . DIRECTORY_SEPARATOR . 'App');
 
 /*
 	The path to the vendor directory
