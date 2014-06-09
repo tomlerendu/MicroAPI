@@ -1,5 +1,9 @@
 <?php
+
 namespace MicroAPI;
+
+use Exception;
+use PDO;
 
 class Database extends Singleton
 {
@@ -21,7 +25,7 @@ class Database extends Singleton
 		//Attempt to make a connection to the database
 		try
 		{
-			$this->connection = new \PDO(
+			$this->connection = new PDO(
 				'mysql:host=' . $this->config['host'] . ';dbname=' . $this->config['name'],
 				$this->config['user'],
 				$this->config['pass']
@@ -49,15 +53,15 @@ class Database extends Singleton
 		if(!is_array($params))
 			$params = [$params];
 
-		$statment = $this->connection->prepare($query);
+        $statement = $this->connection->prepare($query);
 
 		//If no parameters were passed...
 		if($params == '')
-			$statment->execute();
+            $statement->execute();
 		else
-			$statment->execute($params);
+            $statement->execute($params);
 
-		return $statment;
+		return $statement;
 	}
 
 	/**
@@ -72,13 +76,13 @@ class Database extends Singleton
 		
 		switch ($fetchMode) {
 			case 'ASSOC':
-				$fetchMode = \PDO::FETCH_ASSOC;
+				$fetchMode = PDO::FETCH_ASSOC;
 				break;
 			case 'NUM':
-				$fetchMode = \PDO::FETCH_NUM;
+				$fetchMode = PDO::FETCH_NUM;
 				break;
 			case 'OBJ':
-				$fetchMode = \PDO::FETCH_OBJ;
+				$fetchMode = PDO::FETCH_OBJ;
 				break;
 			default:
 				$fetchMode = false;
@@ -86,9 +90,9 @@ class Database extends Singleton
 		}
 
 		//Make the query
-		$statment = $this->query($query, $params);
+		$statement = $this->query($query, $params);
 		//Fetch the results from the database
-		$results = $statment->fetchAll($fetchMode);
+		$results = $statement->fetchAll($fetchMode);
 
 		return $results;
 	}

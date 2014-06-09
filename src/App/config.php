@@ -5,12 +5,12 @@ return [
         Sub folder
         ----------
 
-        If the app is not at the root of the domain specify the sub folder it is located in.
+        If the app is not at the root of the domain specify the sub directory it is located in.
         EG: for website.com/api/public would be /api/public.
 
      */
 
-    'subfolder' => '/MicroAPI/public',
+    'subdirectory' => '/microapi/src/public',
 
 	/*
 		Autoloader
