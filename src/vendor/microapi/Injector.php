@@ -31,11 +31,26 @@ class Injector
      *
      * @throws Exception
      */
-    public function inject($className, $methodName)
+    public function injectMethod($className, $methodName)
     {
         $reflection = new ReflectionMethod($className, $methodName);
         $params = $reflection->getParameters();
+        $dependencies = $this->getDependencies($params);
 
+        call_user_func_array([new $className, $methodName], $dependencies);
+    }
+
+    public function injectFunction($functionName)
+    {
+        $reflection = new ReflectionFunction($functionName);
+        $params = $reflection->getParameters();
+        $dependencies = $this->getDependencies($params);
+
+        call_user_func_array($functionName, $dependencies);
+    }
+
+    private function getDependencies($params)
+    {
         $dependencies = [];
         foreach($params as $param)
         {
@@ -47,9 +62,8 @@ class Injector
                 throw new Exception("Could not inject service '" . $param->name . "'.");
         }
 
-        call_user_func_array([new $className, $methodName], $dependencies);
+        return $dependencies;
     }
-
 
     /**
      * @param $paramName

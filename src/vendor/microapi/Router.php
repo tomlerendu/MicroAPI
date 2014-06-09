@@ -102,12 +102,13 @@ class Router
                 $controller = explode('@', $rule['object']);
                 $controllerName = '\\App\\Controller\\' . $controller[0];
                 $controllerMethod = $controller[1];
-                $this->injector->inject($controllerName, $controllerMethod);
+                $this->injector->injectMethod($controllerName, $controllerMethod);
             }
             //If the controller is a function
             else if(isset($rule['function']))
             {
-
+                $function = require APP_PATH . DIRECTORY_SEPARATOR . 'Controller' . DIRECTORY_SEPARATOR . $rule['function'] . '.php';
+                $this->injector->injectFunction($function);
             }
 
             $this->matchedRule = true;
