@@ -1,11 +1,19 @@
 <?php
+
 namespace MicroAPI;
 
-class Response extends Singleton
+class Response
 {
+    private $config;
+
+    public function __construct($config)
+    {
+        $this->config = $config;
+    }
+
 	public function make($responseArray, $options = [])
 	{
-		//Set any defualt headers
+		//Set any default headers
 		if(count($this->config['headers']) != 0)
 			$this->setHeaders($this->config['headers']);
 		//Set any custom headers
@@ -13,7 +21,7 @@ class Response extends Singleton
 			$this->setHeaders($options['header']);
 
 		//Set the cache time
-		$cacheTime = isset($options['chache']) ? $options['chache'] : $this->config['cache'];
+		$cacheTime = isset($options['cache']) ? $options['cache'] : $this->config['cache'];
 		if($cacheTime !== 0)
 		{
 			$ttl = gmdate('D, d M Y H:i:s', time() + $cacheTime) . ' GMT';

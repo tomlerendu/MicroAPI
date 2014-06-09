@@ -3,10 +3,13 @@ namespace MicroAPI;
 
 class Router
 {
-    private $routes = [];
+    private $injector;
+    private $matchedRule = false;
 
-	public function __construct()
+	public function __construct($injector)
 	{
+        $this->injector = $injector;
+
         /**
 		$request = Request::getInstance();
 		$match = false;
@@ -48,131 +51,129 @@ class Router
          */
 	}
 
-    public function any($route, $method, $requirement)
+    public function any($rule)
     {
-        $this->route('any', $route, $method, $requirement);
+        $rule['method'] = 'ANY';
+        $this->route($rule);
     }
 
-    public function get($route, $method, $requirement)
+    public function get($rule)
     {
-        $this->route('get', $route, $method, $requirement);
+        $rule['method'] = 'GET';
+        $this->route($rule);
     }
 
-    public function post($route, $method, $requirement)
+    public function post($rule)
     {
-        $this->route('post', $route, $method, $requirement);
+        $rule['method'] = 'POST';
+        $this->route($rule);
     }
 
-    public function put($route, $method, $requirement)
+    public function put($rule)
     {
-        $this->route('put', $route, $method, $requirement);
+        $rule['method'] = 'PUT';
+        $this->route($rule);
     }
 
-    public function delete($route, $method, $requirement)
+    public function delete($rule)
     {
-        $this->route('delete', $route, $method, $requirement);
+        $rule['method'] = 'DELETE';
+        $this->route($rule);
     }
 
-    private function route($httpMethod, $route, $method, $requirement)
+    private function route($rule)
     {
-        
+        //Don't process any rules when the correct rule has already been found
+        if($this->matchedRule)
+            return;
+
+        $request = $this->injector->getService('request');
+
+        if(
+            $this->matchMethod($rule['method'], $request->getMethod()) &&
+            $wildcards = $this->matchRoute($rule['route'], $request->getPath())
+        )
+        {
+            $request->setPathWildcards($wildcards);
+
+            //If the controller is a method
+            if(isset($rule['object']))
+            {
+                $controller = explode('@', $rule['object']);
+                $controllerName = '\\App\\Controller\\' . $controller[0];
+                $controllerMethod = $controller[1];
+                $this->injector->inject($controllerName, $controllerMethod);
+            }
+            //If the controller is a function
+            else if(isset($rule['function']))
+            {
+
+            }
+
+            $this->matchedRule = true;
+        }
+
+        //todo: make sure the requirement is satisfied before loading the controller
     }
 
-	private function processRules($rules, $request)
+    /**
+     * @param $method
+     * @param $requestMethod
+     * @return bool
+     */
+    private function matchMethod($method, $requestMethod)
 	{
-		//The wildcards to be returned
-		$wildcards = [];
-
-		foreach($rules as $ruleType => $ruleValue)
-		{
-			$rulePassed = false;
-
-			switch($ruleType) 
-			{
-				case 'path':
-					$rulePassed = $this->matchWildcards($ruleValue, $request->getPath(), '/');
-					break;
-				case 'method':
-					$rulePassed = $this->matchMethod($ruleValue, $request->getMethod());
-					break;
-			}
-
-			//If the rule failed
-			if($rulePassed === false)
-				return false;
-			//If the rule passed
-			else
-			{
-				//For each new wildcard found
-				foreach($rulePassed as $item)
-					//Add it to the wildcards array
-					$wildcards[] = $item;
-			}
-		}
-
-		return $wildcards;
-	}
-
-	/**
-	 * 
-	 */
-	private function matchMethod($method, $requestMethod)
-	{
-		if(strtolower($method) == strtolower($requestMethod))
-			return [];
+        if($requestMethod == 'any' || $method == $requestMethod)
+            return true;
 
 		return false;
 	}
 
     /**
-     * @param $pattern
-     * @param $subject
-     * @param bool $delimiter
+     * @param $route
+     * @param $requestRoute
      * @return array|bool
      */
-    private function matchRoute($pattern, $subject, $delimiter=false)
+    private function matchRoute($route, $requestRoute)
 	{
-		if($delimiter !== false)
-		{
-			$pattern = explode($delimiter, trim($pattern, $delimiter));
-			$subject = explode($delimiter, trim($subject, $delimiter));
-		}
+        $route = explode('/', trim($route, '/'));
+        $requestRoute = explode('/', trim($requestRoute, '/'));
 
 		$params = [];
 
 		//If the route and request path don't have the same number of sections
-		if(count($pattern) !== count($subject))
+		if(count($route) !== count($requestRoute))
 			return false;
 
 		//For each route and path
-		for($i=0; $i<count($pattern); $i++)
+		for($i=0; $i<count($route); $i++)
 		{
 			//Find out if there's a wildcard in the section
-			$wildcard = strpos($pattern[$i], '(?)');
+			$wildcard = strpos($route[$i], '(?)');
 
 			//If there is and its on its own
-			if($wildcard !== false && strlen($pattern[$i]) === 3)
+			if($wildcard !== false && strlen($route[$i]) === 3)
 			{
-				$params[] = $subject[$i];
+				$params[] = $requestRoute[$i];
 			}
 			//If there is and its bordered by other characters 
 			else if($wildcard !== false)
 			{
 				if(
-					substr($pattern[$i], 0, $wildcard) == substr($subject[$i], 0, $wildcard) &&
-					substr($subject[$i], -strlen(substr($pattern[$i], $wildcard+3))) == substr($pattern[$i], $wildcard+3)
+					substr($route[$i], 0, $wildcard) == substr($requestRoute[$i], 0, $wildcard) &&
+					substr($requestRoute[$i], -strlen(substr($route[$i], $wildcard+3))) == substr($route[$i], $wildcard+3)
 				)
 				{
-					$routeParts = explode('(?)', $pattern[$i]);
-					$param = substr($subject[$i], strlen($routeParts[0]));
+					$routeParts = explode('(?)', $route[$i]);
+					$param = substr($requestRoute[$i], strlen($routeParts[0]));
 					$param = substr($param, 0, -strlen($routeParts[1]));
 					$params[] = $param;
 				}
-				else if ($pattern[$i] != '(?)')
+				else if ($route[$i] != '(?)')
 					return false;
 			}
 			//If there's no wildcard make sure the route and path section match
-			else if($pattern[$i] != $subject[$i])
+			else if($route[$i] != $requestRoute[$i])
 				return false;
 		}
 

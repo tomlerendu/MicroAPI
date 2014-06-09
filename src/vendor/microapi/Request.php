@@ -1,14 +1,16 @@
 <?php
+
 namespace MicroAPI;
 
-class Request extends Singleton
+class Request
 {
 	private $method;
 	private $params;
 	private $path;
+    private $pathWildcards;
 	private $userAgent;
 
-	protected function __construct()
+	public function __construct($subDirectory)
 	{
 		//Store the request method
 		$this->method = $_SERVER['REQUEST_METHOD'];
@@ -27,7 +29,10 @@ class Request extends Singleton
 		}
 
 		//Store the path
-		$this->path = $_SERVER['REQUEST_URI'];
+        if($subDirectory === '')
+		    $this->path = $_SERVER['REQUEST_URI'];
+        else
+            $this->path = explode($subDirectory, $_SERVER['REQUEST_URI'], 2)[1];
 
 		//Store the useragent
 		$this->userAgent = $_SERVER['HTTP_USER_AGENT'];
@@ -43,14 +48,13 @@ class Request extends Singleton
 		return $this->method;
 	}
 
-	/**
-	 * The parameters sent with the request. GET, POST, PUT or DELETE.
-	 *
-	 * @return The parameters send with the request.
-	 */
-	public function getParam($var)
+    /**
+     * @param $var
+     * @return bool
+     */
+    public function getParam($var)
 	{
-		return (isset($this->data[$var])) ? $this->data[$var] : false;
+		return (isset($this->params[$var])) ? $this->params[$var] : false;
 	}
 
 	/**
@@ -76,4 +80,29 @@ class Request extends Singleton
 	{
 		return $this->userAgent;
 	}
+
+    /**
+     * @param $pathWildcards
+     */
+    public function setPathWildcards($pathWildcards)
+    {
+        $this->pathWildcards = $pathWildcards;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getPathWildcards()
+    {
+        return isset($this->pathWildcards) ? $this->pathWildcards : false;
+    }
+
+    /**
+     * @param $index
+     * @return bool
+     */
+    public function getPathWildcard($index)
+    {
+        return isset($this->pathWildcards[$index]) ? $this->pathWildcards[$index] : false;
+    }
 }

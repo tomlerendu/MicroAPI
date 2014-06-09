@@ -2,36 +2,78 @@
 
 namespace MicroAPI;
 
-use ReflectionParameter;
+use ReflectionFunction;
+use ReflectionMethod;
+use Exception;
 
 class Injector
 {
     private $services = [];
 
-    public function addDependency($paramName, $service, $config=[])
+    /**
+     * @param $paramName
+     * @param $service
+     * @param array $config
+     */
+    public function addDependency($paramName, $service, $config=null)
     {
-        $this->services[$paramName] = [$service, $config];
+        if(is_string($service))
+            $this->services[$paramName] = [$service, $config];
+        else
+            $this->services[$paramName] = $service;
     }
 
     /**
      * Injects the required services into a class method
      *
-     * @param $class - The class the method belongs to
-     * @param $method - The method that will be used for injection
+     * @param $className - The class the method belongs to
+     * @param $methodName - The method that will be used for injection
+     *
+     * @throws Exception
      */
-    public function inject($class, $method)
+    public function inject($className, $methodName)
     {
-        $params = new ReflectionParameter($class, $method);
-        $params = $params->getParameters();
+        $reflection = new ReflectionMethod($className, $methodName);
+        $params = $reflection->getParameters();
+
+        $dependencies = [];
+        foreach($params as $param)
+        {
+            if(isset($this->services[$param->name]))
+            {
+                $dependencies[] = $this->getService($param->name);
+            }
+            else
+                throw new Exception("Could not inject service '" . $param->name . "'.");
+        }
+
+        call_user_func_array([new $className, $methodName], $dependencies);
     }
 
-    /**
-     * Creates the instance of a service with a given param name.
-     *
-     * @param $paramName - The param name
-     */
-    private function createService($paramName)
-    {
 
+    /**
+     * @param $paramName
+     * @return mixed
+     */
+    public function getService($paramName)
+    {
+        //If the service exists
+        if(isset($this->services[$paramName]))
+        {
+            //If the service instance hasn't been created yet
+            if(is_array($this->services[$paramName]))
+            {
+                $service = $this->services[$paramName];
+                if($service[1] !== null)
+                    $service = new $service[0]($service[1]);
+                else
+                    $service = new $service[0]();
+                $this->services[$paramName] = $service;
+            }
+
+            return $this->services[$paramName];
+        }
+
+        return null;
     }
 } 

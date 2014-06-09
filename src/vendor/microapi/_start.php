@@ -18,11 +18,12 @@ $autoloader->addNamespaces($config['autoloader']);
 // Create the dependency injector
 
 $injector = new \MicroAPI\Injector();
+$injector->addDependency('injector', $injector);
 $injector->addDependency('database', '\MicroAPI\Database', $config['database']);
-$injector->addDependency('request', '\MicroAPI\Request');
-$injector->addDependency('response', '\MicroAPI\response', $config['response']);
+$injector->addDependency('request', '\MicroAPI\Request', $config['subdirectory']);
+$injector->addDependency('response', '\MicroAPI\Response', $config['response']);
 
 // Create the router and load the App routes file
 
-$router = new \MicroAPI\Router();
+$router = new \MicroAPI\Router($injector);
 require APP_PATH . DIRECTORY_SEPARATOR . 'routes.php';
