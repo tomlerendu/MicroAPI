@@ -9,46 +9,6 @@ class Router
 	public function __construct($injector)
 	{
         $this->injector = $injector;
-
-        /**
-		$request = Request::getInstance();
-		$match = false;
-		
-		//For each controller
-		foreach($routes as $route)
-		{
-			$controller = $route[0];
-			$rules = array_splice($route, count($route)-2);
-
-			//If a single path was given
-			if(!is_array($rules))
-				$rules = ['path'=>$rules];
-
-			//If short hand [path, method] was given
-			//Check if the array is not an assoc array
-			if(array_key_exists(0, $rules) && array_key_exists(1, $rules))
-				$rules = ['path'=>$rules[0], 'method'=>$rules[1]];
-
-			$match = $this->processRules($rules, $request);
-
-			if($match !== false)
-			{
-				//Create the controller
-				$controller = explode('@', $controller);
-				$controllerName = '\\App\\Controller\\' . $controller[0];
-				$controllerMethod = $controller[1];
-				$controller = new $controllerName();
-				call_user_func_array([$controller, $controllerMethod], $match);
-				//Break the loop as a suitable controller was found
-				break;
-			}
-		}
-
-		//If no matches were found
-		if($match === false)
-			Response::getInstance()->error(404);
-
-         */
 	}
 
     public function any($rule)
