@@ -24,17 +24,18 @@ Structure
 
 A MicroAPI application by default has the following structure. 
 
-- app
-  - controllers
-  - models
-- microapi
+- App
+  - Controller
+  - Models
+- vendor
+  - MicroAPI
 - public
 
 The directory structure can be changed by editing the constants `MICROAPI_PATH` and `APP_PATH` in `public/index.php` then moving the directories to their corresponding locations. It is advisable to keep code out of the public directory. 
 
 All application code should be stored in the app directory. 
 
-The microapi directory contains the framework. If there are multiple websites using MicroAPI on the same system they can share one copy of it. 
+The MicroAPI directory contains the framework. If there are multiple websites using MicroAPI on the same system they can share one copy of it.
 
 The public directory is where the requests enter the framework. 
 
@@ -67,53 +68,20 @@ Routes for your application are defined in the /app/routes.php file.
 Controllers
 -----------
 
-There is one controller per request. For convenience controllers have references to the request, response and database objects.
+Controllers can be either a function or a method on an object.
 
-<table>
-	<tr>
-		<th>Class</th>
-		<th>Reference</th>
-	</tr>
-	<tr>
-		<td>Request</td>
-		<td>$this->request</td>
-	</tr>
-	<tr>
-		<td>Response</td>
-		<td>$this->response</td>
-	</tr>
-	<tr>
-		<td>Database</td>
-		<td>$this->database</td>
-	</tr>
-</table> 
-
-Requests
+Services
 --------
+
+### Request
 
 The request object is a representation of the request the user made.
 
-
-Responses
----------
+### Responses
 
 Responses are "replies" to a clients request, only one response should be sent per request.
 
-### Responding
-`$this->response->make($array, $options)`
-
-### Responding with an error
-`$this->response->error(404, $array, $options)`
-
-### Options
-
-Both the `make` and `error` methods take an optional `$options` parameter.
-
-Models
-------
-
-Database
---------
+### Database
 
 The database layer is built on top of PDO, it has convinience functions to make accessing the database easier.
 
@@ -128,8 +96,8 @@ The database layer is built on top of PDO, it has convinience functions to make 
 
 For more specific tasks you can access the database directly by calling `getConnection()` which returns the PDO object.
 
+Models
+------
+
 Known issues
 ------------
-
-- A controller and method combination cannot be added to the routes file more than once
-- Models implementation is not finished
