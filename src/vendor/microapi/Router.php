@@ -51,7 +51,8 @@ class Router
 
         if(
             $this->matchMethod($rule['method'], $request->getMethod()) &&
-            $wildcards = $this->matchRoute($rule['route'], $request->getPath())
+            ($wildcards = $this->matchRoute($rule['route'], $request->getPath())) &&
+            $this->injector->injectFunction($rule['require'])
         )
         {
             $request->setPathWildcards($wildcards);
@@ -73,8 +74,6 @@ class Router
 
             $this->matchedRule = true;
         }
-
-        //todo: make sure the requirement is satisfied before loading the controller
     }
 
     /**

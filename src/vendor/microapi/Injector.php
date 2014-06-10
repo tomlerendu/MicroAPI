@@ -30,6 +30,8 @@ class Injector
      * @param $methodName - The method that will be used for injection
      *
      * @throws Exception
+     *
+     * @return mixed
      */
     public function injectMethod($className, $methodName)
     {
@@ -37,16 +39,20 @@ class Injector
         $params = $reflection->getParameters();
         $dependencies = $this->getDependencies($params);
 
-        call_user_func_array([new $className, $methodName], $dependencies);
+        return call_user_func_array([new $className, $methodName], $dependencies);
     }
 
+    /**
+     * @param $functionName
+     * @return mixed
+     */
     public function injectFunction($functionName)
     {
         $reflection = new ReflectionFunction($functionName);
         $params = $reflection->getParameters();
         $dependencies = $this->getDependencies($params);
 
-        call_user_func_array($functionName, $dependencies);
+        return call_user_func_array($functionName, $dependencies);
     }
 
     private function getDependencies($params)
