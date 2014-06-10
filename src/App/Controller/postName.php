@@ -2,6 +2,6 @@
 
 return function($request, $response)
 {
-    $data = ['greeting' => 'Hi, ' . $request->getPathWildcard(0)];
+    $data = ['greeting' => 'Hi, ' . $request->getPathWildcard('name')];
     $response->make($data);
 };

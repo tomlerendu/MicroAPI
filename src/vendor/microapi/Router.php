@@ -51,7 +51,7 @@ class Router
 
         if(
             $this->matchMethod($rule['method'], $request->getMethod()) &&
-            ($wildcards = $this->matchRoute($rule['route'], $request->getPath())) &&
+            ($wildcards = $this->matchRoute($rule['route'], $request->getPath())) !== false &&
             $this->injector->injectFunction($rule['require'])
         )
         {
@@ -105,36 +105,28 @@ class Router
 		if(count($route) !== count($requestRoute))
 			return false;
 
-		//For each route and path
+		//For each route and path part
 		for($i=0; $i<count($route); $i++)
 		{
-			//Find out if there's a wildcard in the section
-			$wildcard = strpos($route[$i], '(?)');
+            $regex = preg_match_all('(\(.*?\))', $route[$i], $routeParams);
+            $routeParams = $routeParams[0];
 
-			//If there is and its on its own
-			if($wildcard !== false && strlen($route[$i]) === 3)
-			{
-				$params[] = $requestRoute[$i];
-			}
-			//If there is and its bordered by other characters 
-			else if($wildcard !== false)
-			{
-				if(
-					substr($route[$i], 0, $wildcard) == substr($requestRoute[$i], 0, $wildcard) &&
-					substr($requestRoute[$i], -strlen(substr($route[$i], $wildcard+3))) == substr($route[$i], $wildcard+3)
-				)
-				{
-					$routeParts = explode('(?)', $route[$i]);
-					$param = substr($requestRoute[$i], strlen($routeParts[0]));
-					$param = substr($param, 0, -strlen($routeParts[1]));
-					$params[] = $param;
-				}
-				else if ($route[$i] != '(?)')
-					return false;
-			}
-			//If there's no wildcard make sure the route and path section match
-			else if($route[$i] != $requestRoute[$i])
-				return false;
+            //If there are wildcards
+            if($regex)
+            {
+                $quotedRouteParams = array_map('preg_quote', $routeParams);
+                $matchPattern = preg_quote($route[$i]);
+                $matchPattern = '/^' . str_replace($quotedRouteParams, '(.*?)', $matchPattern) . '$/';
+
+                if(preg_match($matchPattern, $requestRoute[$i], $matchedParams))
+                {
+                    for($i=0; $i<count($routeParams); $i++)
+                        $params[trim($routeParams[$i], '()')] = $matchedParams[$i+1];
+                }
+            }
+            //If there's no wildcard make sure the route and path section match
+            else if($route[$i] !== $requestRoute[$i])
+                return false;
 		}
 
 		//Return the wildcard values
