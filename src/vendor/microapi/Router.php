@@ -66,10 +66,21 @@ class Router
                 $this->injector->injectMethod($controllerName, $controllerMethod);
             }
             //If the controller is a function
-            else if(isset($rule['function']))
+            else if(isset($rule['function']) && is_array($rule['function']))
             {
-                $function = require APP_PATH . DIRECTORY_SEPARATOR . 'Controller' . DIRECTORY_SEPARATOR . $rule['function'] . '.php';
-                $this->injector->injectFunction($function);
+                if(is_array($rule['function']))
+                {
+                    $funcFile = $rule['function'][0];
+                    $funcName = $rule['function'][1];
+                }
+                else
+                {
+                    $funcFile = $rule['function'];
+                    $funcName = $rule['function'];
+                }
+
+                require_once APP_PATH . DIRECTORY_SEPARATOR . 'Controller' . DIRECTORY_SEPARATOR . $funcFile . '.php';
+                $this->injector->injectFunction($funcName);
             }
 
             $this->matchedRule = true;

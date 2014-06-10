@@ -10,7 +10,7 @@ $router->get([
 
 $router->post([
     'route' => '/name/(name)',
-    'function' => 'postName',
+    'function' => ['functionExample', 'postName'],
     'require' => function() {
         return 1 + 1 == 2;
     }
