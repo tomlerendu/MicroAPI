@@ -4,24 +4,28 @@ namespace MicroAPI;
 
 class Response
 {
-    private $config;
+    private $format;
+    private $cacheTime;
+    private $headers;
 
-    public function __construct($config)
+    public function __construct($format, $cacheTime, $headers)
     {
-        $this->config = $config;
+        $this->format = $format;
+        $this->cacheTime = $cacheTime;
+        $this->headers = $headers;
     }
 
-	public function make($responseArray, $options = [])
+	public function make($responseArray, $options=[])
 	{
 		//Set any default headers
-		if(count($this->config['headers']) != 0)
-			$this->setHeaders($this->config['headers']);
+		if(count($this->headers) != 0)
+			$this->setHeaders($this->headers);
 		//Set any custom headers
 		if(isset($options['header']))
 			$this->setHeaders($options['header']);
 
 		//Set the cache time
-		$cacheTime = isset($options['cache']) ? $options['cache'] : $this->config['cache'];
+		$cacheTime = isset($options['cacheTime']) ? $options['cacheTime'] : $this->cacheTime;
 		if($cacheTime !== 0)
 		{
 			$ttl = gmdate('D, d M Y H:i:s', time() + $cacheTime) . ' GMT';
@@ -32,7 +36,7 @@ class Response
 			]);
 		}
 
-		$responseMaker = (isset($options['format'])) ? $options['format'] : $this->config['format'];
+		$responseMaker = (isset($options['format'])) ? $options['format'] : $this->format;
 		$responseMaker = new $responseMaker($responseArray);
 
 		$this->setHeaders($responseMaker->getHeaders());

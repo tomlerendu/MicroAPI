@@ -20,7 +20,7 @@ $autoloader->addNamespaces($config['autoloader']);
 $injector = new \MicroAPI\Injector();
 $injector->addDependency('injector', $injector);
 $injector->addDependency('database', '\MicroAPI\Database', $config['database']);
-$injector->addDependency('request', '\MicroAPI\Request', $config['subdirectory']);
+$injector->addDependency('request', '\MicroAPI\Request', ['subDirectory' => $config['subDirectory']]);
 $injector->addDependency('response', '\MicroAPI\Response', $config['response']);
 
 // Create the router and load the App routes file

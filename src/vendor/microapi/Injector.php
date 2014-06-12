@@ -4,6 +4,7 @@ namespace MicroAPI;
 
 use ReflectionFunction;
 use ReflectionMethod;
+use ReflectionClass;
 use Exception;
 
 class Injector
@@ -13,12 +14,12 @@ class Injector
     /**
      * @param $paramName
      * @param $service
-     * @param array $config
+     * @param array $constructorArgs
      */
-    public function addDependency($paramName, $service, $config=null)
+    public function addDependency($paramName, $service, $constructorArgs=null)
     {
         if(is_string($service))
-            $this->services[$paramName] = [$service, $config];
+            $this->services[$paramName] = [$service, $constructorArgs];
         else
             $this->services[$paramName] = $service;
     }
@@ -84,8 +85,23 @@ class Injector
             if(is_array($this->services[$paramName]))
             {
                 $service = $this->services[$paramName];
+                //If the service has parameters in the constructor
                 if($service[1] !== null)
-                    $service = new $service[0]($service[1]);
+                {
+                    //Get the arguments the constructor takes
+                    $class = new ReflectionClass($service[0]);
+                    $constructorArguments = $class->getConstructor()->getParameters();
+                    //Create an array of parameters
+                    $constructorParams = [];
+                    foreach($constructorArguments as $constructorArgument)
+                    {
+                        $constructorParams[$constructorArgument->getName()] =
+                            (isset($service[1][$constructorArgument->getName()])) ?
+                                $service[1][$constructorArgument->getName()] : null;
+                    }
+                    $service = $class->newInstanceArgs($constructorParams);
+                }
+                //If the service does not have parameters in the constructor
                 else
                     $service = new $service[0]();
                 $this->services[$paramName] = $service;

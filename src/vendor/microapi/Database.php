@@ -5,18 +5,12 @@ namespace MicroAPI;
 use Exception;
 use PDO;
 
-class Database extends Singleton
+class Database
 {
 	//PDO database connection
 	private $connection;
-	
-	/**
-	 * Makes the connection to the database. Not called until a connection to the
-	 * database is actually needed.
-	 *
-	 *	@return void
-	 */
-	private function checkForConnection()
+
+	public function __construct($host, $name, $user, $pass)
 	{
 		//If a connection already exists return
 		if(isset($connection))
@@ -25,16 +19,13 @@ class Database extends Singleton
 		//Attempt to make a connection to the database
 		try
 		{
-			$this->connection = new PDO(
-				'mysql:host=' . $this->config['host'] . ';dbname=' . $this->config['name'],
-				$this->config['user'],
-				$this->config['pass']
-			);
+			$this->connection = new PDO('mysql:host=' . $host . ';dbname=' . $name, $user, $pass);
 		}
 		catch(Exception $e)
 		{
 			//Throw a more generic message to avoid database connection details leaking
 			throw new Exception('Error connecting to the database');
+            $this->connection = null;
 		}
 	}
 
@@ -47,29 +38,35 @@ class Database extends Singleton
 	public function query($query, $params)
 	{
 		//Make sure a database connection exists
-		$this->checkForConnection();
+        if(isset($connection))
+        {
+            //If only one data value was passed in wrap it in an array
+            if(!is_array($params))
+                $params = [$params];
 
-		//If only one data value was passed in wrap it in an array
-		if(!is_array($params))
-			$params = [$params];
+            $statement = $this->connection->prepare($query);
 
-        $statement = $this->connection->prepare($query);
+            //If no parameters were passed...
+            if($params == '')
+                $statement->execute();
+            else
+                $statement->execute($params);
 
-		//If no parameters were passed...
-		if($params == '')
-            $statement->execute();
-		else
-            $statement->execute($params);
+            return $statement;
+        }
+        else
+        {
 
-		return $statement;
+        }
 	}
 
-	/**
-	 * Performs a query and fetches the results.
-	 *
-	 * @return The results of the query
-	 */
-	public function select($query, $params = '', $options = [])
+    /**
+     * @param $query
+     * @param string $params
+     * @param array $options
+     * @return mixed
+     */
+    public function select($query, $params='', $options=[])
 	{
 		//If a fetch mode was defined use it, else use the one defined in the config file
 		$fetchMode = (isset($options['fetch'])) ? $options['fetch'] : $this->config['fetch'];
