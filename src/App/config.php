@@ -10,7 +10,7 @@ return [
 
      */
 
-    'subdirectory' => '/microapi/src/public',
+    'subDirectory' => '',
 
 	/*
 		Autoloader
@@ -51,7 +51,7 @@ return [
 
 	'response' => [
 		'format' => '\MicroAPI\Response\JsonResponse',
-		'cache' => 0,
+		'cacheTime' => 0,
 		'headers' => [
 		]
 	]
