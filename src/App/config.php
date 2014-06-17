@@ -37,7 +37,7 @@ return [
 		'name' => '',
 		'host' => 'localhost',
 
-		'fetch' => 'ASSOC'
+		'fetch' => PDO::FETCH_ASSOC
 	],
 
 
