@@ -32,8 +32,9 @@ class Database
 	/**
 	 * Performs a query on the database.
 	 * 
-	 * @param 
-	 * @return An executed database statment
+	 * @param query
+     * @param params
+	 * @return - An executed database statement
 	 */
 	public function query($query, $params)
 	{
@@ -62,29 +63,14 @@ class Database
 
     /**
      * @param $query
-     * @param string $params
+     * @param array $params
      * @param array $options
      * @return mixed
      */
-    public function select($query, $params='', $options=[])
+    public function select($query, $params=[], $options=[])
 	{
 		//If a fetch mode was defined use it, else use the one defined in the config file
 		$fetchMode = (isset($options['fetch'])) ? $options['fetch'] : $this->config['fetch'];
-		
-		switch ($fetchMode) {
-			case 'ASSOC':
-				$fetchMode = PDO::FETCH_ASSOC;
-				break;
-			case 'NUM':
-				$fetchMode = PDO::FETCH_NUM;
-				break;
-			case 'OBJ':
-				$fetchMode = PDO::FETCH_OBJ;
-				break;
-			default:
-				$fetchMode = false;
-				break;
-		}
 
 		//Make the query
 		$statement = $this->query($query, $params);
@@ -99,7 +85,7 @@ class Database
 	*
 	* @return The primary key of the row inserted
 	*/
-	public function insert($query, $params = '')
+	public function insert($query, $params=[])
 	{
 		//Make the query
 		$this->query($query, $params);
@@ -112,7 +98,7 @@ class Database
 	 *
 	 * @return The number of rows affected by the query
 	 */ 
-	public function update($query, $params = '')
+	public function update($query, $params=[])
 	{
 		//Make the query
 		$query = $this->query($query, $params);
@@ -123,9 +109,9 @@ class Database
 	/**
 	 * Performs an delete query
 	 *
-	 * @return The number of rows affected by the query
+	 * @return - The number of rows affected by the query
 	 */ 
-	public function delete($query, $params = '')
+	public function delete($query, $params=[])
 	{
 		//Make and return the query
 		return $this->update($query, $params);
@@ -134,10 +120,10 @@ class Database
 	/**
 	 * Access the database object directly 
 	 *
-	 * @return The PDO database object
+	 * @return - The PDO database object
 	 */
 	public function getConnection()
 	{
-		return (isset($this->connection)) ? $this->connection : false;
+		return (isset($this->connection)) ? $this->connection : null;
 	}
 }
