@@ -26,7 +26,16 @@ class InjectorTest extends PHPUnit_Framework_TestCase
         $injector->addDependency('test', 'TestService');
         $service1 = $injector->getService('test');
         $service2 = $injector->getService('test');
-        $this->assertTrue($service1 === $service2);
+        $this->assertEquals($service1, $service2);
+    }
+
+    public function testObjectAsService()
+    {
+        $injector = new Injector();
+        $testService = new TestService();
+        $injector->addDependency('test', $testService);
+        $service = $injector->getService('test');
+        $this->assertEquals($service, $testService);
     }
 }
 
