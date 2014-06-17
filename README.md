@@ -1,10 +1,7 @@
-1.0 documentation draft. 
-This project isn't finished and parts won't work as the documentation specifies. 
-
 MicroAPI
 ========
 
-MicroAPI is an extremely lightweight PHP framework for creating API's. 
+MicroAPI is an extremely lightweight PHP framework for creating REST APIs.
 
 Requirements
 ------------
@@ -68,10 +65,20 @@ Routes for your application are defined in the /app/routes.php file.
 Controllers
 -----------
 
-Controllers can be either a function or a method on an object.
+Controllers are dependency injected, they can be either a function or a method on an object.
+
+    function myController($request, $response, $database)
+    {
+        $id = $request->getParam('id');
+        $results = $database->select('SELECT * FROM Table WHERE id = ?', $id);
+
+        $response->make($results);
+    }
 
 Services
 --------
+
+A service is an object that can be injected at various places in the application, there will only one instance of each service per request.
 
 ### Request
 
@@ -83,16 +90,17 @@ Responses are "replies" to a clients request, only one response should be sent p
 
 ### Database
 
-The database layer is built on top of PDO, it has convinience functions to make accessing the database easier.
+The database layer is built on top of PDO, it has convenience functions to make accessing the database easier.
 
-### select
-### insert
-### update
-### delete
-### query
+#### select
+
+#### insert
+#### update
+#### delete
+#### query
 
 
-### Accessing PDO directly
+#### Accessing PDO directly
 
 For more specific tasks you can access the database directly by calling `getConnection()` which returns the PDO object.
 
