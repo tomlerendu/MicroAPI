@@ -24,15 +24,15 @@ A MicroAPI application by default has the following structure.
 - App
   - Controller
   - Models
-- vendor
-  - MicroAPI
+  - Services
+- MicroAPI
 - public
 
-The directory structure can be changed by editing the constants `MICROAPI_PATH` and `APP_PATH` in `public/index.php` then moving the directories to their corresponding locations. It is advisable to keep code out of the public directory. 
+The directory structure can be changed by editing the constants `MICROAPI_PATH` and `APP_PATH` in `public/const.php` then moving the directories to their corresponding locations. It is advisable to keep application code out of the public directory.
 
-All application code should be stored in the app directory. 
+The App directory is where you write your application.
 
-The MicroAPI directory contains the framework. If there are multiple websites using MicroAPI on the same system they can share one copy of it.
+The MicroAPI directory contains the framework. If there are multiple websites using MicroAPI on the same system they can be configured to share one copy of it.
 
 The public directory is where the requests enter the framework. 
 
