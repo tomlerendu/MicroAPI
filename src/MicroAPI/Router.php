@@ -52,7 +52,7 @@ class Router
         if(
             $this->matchMethod($rule['method'], $request->getMethod()) &&
             ($wildcards = $this->matchRoute($rule['route'], $request->getPath())) !== false &&
-            $this->injector->injectFunction($rule['require'])
+            ((isset($rule['require']) && $this->injector->inject($rule['require'])) || !isset($rule['require']))
         )
         {
             $request->setPathWildcards($wildcards);
@@ -63,7 +63,7 @@ class Router
                 $controller = explode('@', $rule['object']);
                 $controllerName = '\\App\\Controller\\' . $controller[0];
                 $controllerMethod = $controller[1];
-                $this->injector->injectMethod($controllerName, $controllerMethod);
+                $this->injector->inject([$controllerName, $controllerMethod]);
             }
             //If the controller is a function
             else if(isset($rule['function']) && is_array($rule['function']))
@@ -80,7 +80,7 @@ class Router
                 }
 
                 require_once APP_PATH . DIRECTORY_SEPARATOR . 'Controller' . DIRECTORY_SEPARATOR . $funcFile . '.php';
-                $this->injector->injectFunction($funcName);
+                $this->injector->inject($funcName);
             }
 
             $this->matchedRule = true;
