@@ -18,10 +18,27 @@ class Injector
      */
     public function addDependency($paramName, $service, $constructorArgs=null)
     {
+        //If the service hasn't been initialised
         if(is_string($service))
             $this->services[$paramName] = [$service, $constructorArgs];
+        //If the service has been initialised
         else
             $this->services[$paramName] = $service;
+    }
+
+    /**
+     * Injects services into a given procedure
+     *
+     * @param $procedure - The procedure services will be injected into
+     */
+    public function inject($procedure)
+    {
+        //If a class was passed
+        if(is_array($procedure) && count($procedure) === 2)
+            return $this->injectMethod($procedure[0], $procedure[1]);
+        //If a function was passed
+        else if(!is_array($procedure))
+            return $this->injectFunction($procedure);
     }
 
     /**
@@ -34,7 +51,7 @@ class Injector
      *
      * @return mixed
      */
-    public function injectMethod($className, $methodName)
+    private function injectMethod($className, $methodName)
     {
         $reflection = new ReflectionMethod($className, $methodName);
         $params = $reflection->getParameters();
@@ -47,7 +64,7 @@ class Injector
      * @param $functionName
      * @return mixed
      */
-    public function injectFunction($functionName)
+    private function injectFunction($functionName)
     {
         $reflection = new ReflectionFunction($functionName);
         $params = $reflection->getParameters();
