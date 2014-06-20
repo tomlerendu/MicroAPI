@@ -13,15 +13,6 @@ return function($config, $injector)
     $config->set('microapi.subDirectory', '/microapi/src/public');
 
     /*
-		Autoloader
-	    ----------
-
-	    Define any prefixes that should be added to the PSR-4 autoloader for external
-	    libraries. The format 'prefix' => '/location/on/filesystem/' should be used.
-	*/
-    $config->set('microapi.autoloader', []);
-
-    /*
 		Database
 		--------
 
