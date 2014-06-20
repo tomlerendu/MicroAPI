@@ -55,24 +55,27 @@ class Router
             ((isset($rule['require']) && $this->injector->inject($rule['require'])) || !isset($rule['require']))
         )
         {
+            //Pass the path wildcards to the request service
             $request->setPathWildcards($wildcards);
 
             //If the controller is a method
-            if(isset($rule['object']))
+            if(isset($rule['class']))
             {
-                $controller = explode('@', $rule['object']);
+                $controller = explode('@', $rule['class']);
                 $controllerName = '\\App\\Controller\\' . $controller[0];
                 $controllerMethod = $controller[1];
                 $this->injector->inject([$controllerName, $controllerMethod]);
             }
             //If the controller is a function
-            else if(isset($rule['function']) && is_array($rule['function']))
+            else if(isset($rule['function']))
             {
-                if(is_array($rule['function']))
+                //If the location of the function was specified. EG 'filename@functioname'.
+                if(($split = strpos($rule['function'], '@')) !== false)
                 {
-                    $funcFile = $rule['function'][0];
-                    $funcName = $rule['function'][1];
+                    $funcFile = substr($rule['function'], 0, $split);
+                    $funcName = substr($rule['function'], $split+1);
                 }
+                //If the location of the function wasn't specified
                 else
                 {
                     $funcFile = $rule['function'];

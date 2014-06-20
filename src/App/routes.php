@@ -5,7 +5,7 @@ return function($router)
 
     $router->get([
         'route' => '/name/(name)',
-        'object' => 'Example@getName',
+        'class' => 'Example@getName',
         'require' => function() {
             return 1 + 1 == 2;
         }
@@ -13,7 +13,7 @@ return function($router)
 
     $router->post([
         'route' => '/name/(name)',
-        'function' => ['functionExample', 'postName'],
+        'function' => 'functionExample@postName',
         'require' => function() {
             return 1 + 1 == 2;
         }
