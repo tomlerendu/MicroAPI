@@ -67,6 +67,7 @@ Controllers
 
 Controllers are dependency injected, they can be either a function or a method on an object.
 
+```php
     function myController($request, $response, $database)
     {
         $id = $request->getParam('id');
@@ -74,6 +75,7 @@ Controllers are dependency injected, they can be either a function or a method o
 
         $response->make($results);
     }
+```
 
 Services
 --------
