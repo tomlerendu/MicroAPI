@@ -43,10 +43,10 @@ MicroAPI follows the PSR-4 standard for autoloading classes.
 
 ### Request response cycle
 
+Within the App directory there are three files
 1. App/config.php function is executed
 2. App/run.php function is executed
-3. App/routes.php function is executed
-    3.1. If a route is matched it's controller is executed
+3. App/routes.php function is executed - If a route is matched its controller is executed
 
 Config
 ------
@@ -58,9 +58,50 @@ It's recommended not to define values that have a key starting with `microapi.`.
 Routing
 -------
 
-Routes for your application are defined in the /app/routes.php file.
+Routes for your application are defined in the `app/routes.php` file. The router will initialise the controller for the first match, once a match has been found the rest of the routes will not be checked.
+
+By default the `app/routes.php` has two sample routes showing how to setup a function and a class.
+
+```php
+return function($router)
+{
+
+    $router->get([
+        'route' => '/name/(name)',
+        'class' => 'Example@getName',
+        'require' => function() {
+            return 1 + 1 == 2;
+        }
+    ]);
+
+    $router->post([
+        'route' => '/name/(name)',
+        'function' => 'functionExample@postName',
+    ]);
+
+};
+```
+#### Methods
+
+The router has the methods `get`, `post`, `put`, `delete` which match the corresponding HTTP methods and `any` which will match any HTTP method.
+
+#### Routes and wildcards
 
 
+#### Extra requirements
+
+The require function allows for any additional requirements to be specified before the route is matched. If anything other than true is returned from the function the route will not be matched.
+
+```php
+$router->get([
+    'route' => '/user/(id)',
+    'function' => 'user@details',
+    'require' => function($database, $request) {
+        $user = $database->select('SELECT id FROM User WHERE id = ?', $request->getPathWildcard('id'));
+        return count($user) === 1;
+    }
+]);
+```
 
 Controllers
 -----------
@@ -68,13 +109,13 @@ Controllers
 Controllers are dependency injected, they can be either a function or a method on an object.
 
 ```php
-    function myController($request, $response, $database)
-    {
-        $id = $request->getParam('id');
-        $results = $database->select('SELECT * FROM Table WHERE id = ?', $id);
+function myController($request, $response, $database)
+{
+    $id = $request->getParam('id');
+    $results = $database->select('SELECT * FROM Table WHERE id = ?', $id);
 
-        $response->make($results);
-    }
+    $response->make($results);
+}
 ```
 
 Services
