@@ -13,10 +13,7 @@ return function($router)
 
     $router->post([
         'route' => '/name/(name)',
-        'function' => 'functionExample@postName',
-        'require' => function() {
-            return 1 + 1 == 2;
-        }
+        'function' => 'functionExample@postName'
     ]);
 
 };
