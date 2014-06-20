@@ -6,6 +6,12 @@ class Config
 {
     private $config = [];
 
+    /**
+     * Set a key and value in the config service
+     *
+     * @param $key - The key the value should be stored under
+     * @param $value - The value to store
+     */
     public function set($key, $value)
     {
         $key = explode('.', $key);
@@ -24,6 +30,12 @@ class Config
         }
     }
 
+    /**
+     * Retrieve a value from the config service using a given key
+     *
+     * @param $key - The key the value is stored under
+     * @return mixed|null - The value or null if the key doesn't exist
+     */
     public function get($key)
     {
         $key = explode('.', $key);
@@ -40,6 +52,12 @@ class Config
         return $ref;
     }
 
+    /**
+     * Remove a value from the config service
+     *
+     * @param $key - The key of the value to be removed
+     * @return mixed|null - The value that was removed or null if the key doesn't exist
+     */
     public function remove($key)
     {
         $key = explode('.', $key);
