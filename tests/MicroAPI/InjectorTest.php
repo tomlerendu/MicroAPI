@@ -4,18 +4,18 @@ use MicroAPI\Injector;
 
 class InjectorTest extends PHPUnit_Framework_TestCase
 {
-    public function testAddingDependency()
+    public function testAddingService()
     {
         $injector = new Injector();
-        $injector->addDependency('test', 'TestService');
+        $injector->addService('test', 'TestService');
         $service = $injector->getService('test');
         $this->assertTrue(get_class($service) === 'TestService');
     }
 
-    public function testAddingDependencyWithParams()
+    public function testAddingServiceWithParams()
     {
         $injector = new Injector();
-        $injector->addDependency('test', 'TestService', ['second'=>'2', 'first'=>'1']);
+        $injector->addService('test', 'TestService', ['second'=>'2', 'first'=>'1']);
         $service = $injector->getService('test');
         $this->assertTrue($service->getFirst() === '1' && $service->getSecond() == '2');
     }
@@ -23,7 +23,7 @@ class InjectorTest extends PHPUnit_Framework_TestCase
     public function testSingleInstanceOfService()
     {
         $injector = new Injector();
-        $injector->addDependency('test', 'TestService');
+        $injector->addService('test', 'TestService');
         $service1 = $injector->getService('test');
         $service2 = $injector->getService('test');
         $this->assertEquals($service1, $service2);
@@ -33,7 +33,7 @@ class InjectorTest extends PHPUnit_Framework_TestCase
     {
         $injector = new Injector();
         $testService = new TestService();
-        $injector->addDependency('test', $testService);
+        $injector->addService('test', $testService);
         $service = $injector->getService('test');
         $this->assertEquals($service, $testService);
     }
