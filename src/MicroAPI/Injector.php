@@ -12,11 +12,13 @@ class Injector
     private $services = [];
 
     /**
-     * @param $paramName
-     * @param $service
-     * @param array $constructorArgs
+     * Add a service that the injector can inject into functions
+     *
+     * @param $paramName - The name of the service
+     * @param $service - The service, either a class name (string) or the actual service
+     * @param array $constructorArgs - Parameters to be passed to the service when it is initialised
      */
-    public function addDependency($paramName, $service, $constructorArgs=null)
+    public function addService($paramName, $service, $constructorArgs=null)
     {
         //If the service hasn't been initialised
         if(is_string($service))
@@ -30,6 +32,8 @@ class Injector
      * Injects services into a given procedure
      *
      * @param $procedure - The procedure services will be injected into
+     *
+     * @return mixed - The return value of the function or method that was injected
      */
     public function inject($procedure)
     {
@@ -47,9 +51,7 @@ class Injector
      * @param $className - The class the method belongs to
      * @param $methodName - The method that will be used for injection
      *
-     * @throws Exception
-     *
-     * @return mixed
+     * @return mixed - The return value of the function that was injected
      */
     private function injectMethod($className, $methodName)
     {
@@ -61,8 +63,10 @@ class Injector
     }
 
     /**
-     * @param $functionName
-     * @return mixed
+     * Injects the required services into a function
+     *
+     * @param $functionName - The name of the function that will be used for injection
+     * @return mixed - The return value of the function that was injected
      */
     private function injectFunction($functionName)
     {
@@ -73,6 +77,13 @@ class Injector
         return call_user_func_array($functionName, $dependencies);
     }
 
+    /**
+     * Generates an array of services using an array of parameters
+     *
+     * @param $params - The names of the services required
+     * @return array - An array of services
+     * @throws \Exception
+     */
     private function getDependencies($params)
     {
         $dependencies = [];
@@ -90,8 +101,10 @@ class Injector
     }
 
     /**
-     * @param $paramName
-     * @return mixed
+     * Gets the corresponding service for a given parameter
+     *
+     * @param $paramName - The parameter to get the service for
+     * @return mixed - The service or null if the service doesn't exist
      */
     public function getService($paramName)
     {
