@@ -3,16 +3,24 @@ namespace MicroAPI;
 
 class Autoloader
 {
-	private $prefixes;
+	private $prefixes = [];
 
-	public function __construct()
+    /**
+     * Constructs a new instance of Autoloader which will register it's self as an autoloader
+     */
+    public function __construct()
 	{
-		$this->prefixes = [];
-		//Register this class as the autoloader
+		//Register the class as an autoloader
 		spl_autoload_register([$this, 'getClass']);
 	}
 
-	public function getClass($className)
+    /**
+     * Attempts to import a class using its fully qualified name
+     *
+     * @param $className - The class to be imported
+     * @return bool - True if the class was successfully imported, false if not
+     */
+    public function getClass($className)
 	{
 		//Trim the left backslash
 		$className = ltrim($className, '\\');
@@ -35,23 +43,40 @@ class Autoloader
 			return false;
 	}
 
-	public function requireClass($location)
+    /**
+     * Attempts to import a class from a given location on the file system
+     *
+     * @param $location - The location of the class on the file system
+     * @return bool - True if the class was imported, false if not
+     */
+    private function requireClass($location)
 	{
 		if(file_exists($location))
 		{
 			require $location;
 			return true;
 		}
-		else
-			return false;
+
+	    return false;
 	}
 
-	public function addNamespace($prefix, $directory)
+    /**
+     * Adds a new namespace to the autoloader
+     *
+     * @param $prefix - The first part of a the fully qualified class name
+     * @param $directory - The directory on the file system the prefix maps to
+     */
+    public function addNamespace($prefix, $directory)
 	{
 		$this->prefixes[$prefix] = $directory;
 	}
 
-	public function addNamespaces($namespaceArray)
+    /**
+     * Adds multiple namespaces to the autoloader
+     *
+     * @param $namespaceArray - An array of prefixes and directories to be loaded into the autoloader
+     */
+    public function addNamespaces($namespaceArray)
 	{
 		foreach($namespaceArray as $prefix => $directory)
 			$this->addNamespace($prefix, $directory);
