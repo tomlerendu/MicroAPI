@@ -37,8 +37,55 @@ class InjectorTest extends PHPUnit_Framework_TestCase
         $service = $injector->getService('test');
         $this->assertEquals($service, $testService);
     }
+
+    public function testInjectingAnonFunction()
+    {
+        $injector = new Injector();
+        $testService = new TestService(1, 2);
+        $injector->addService('test', $testService);
+
+        $testFunction = function($test)
+        {
+            return $test->getFirst() + $test->getSecond();
+        };
+
+        $this->assertEquals($injector->inject($testFunction), 3);
+    }
+
+    public function testInjectingFunction()
+    {
+        $injector = new Injector();
+        $testService = new TestService(1, 2);
+        $injector->addService('test', $testService);
+        $this->assertEquals($injector->inject('testFunction'), 3);
+    }
+
+    public function testInjectingMethod()
+    {
+        $injector = new Injector();
+        $testService = new TestService(1, 2);
+        $injector->addService('test', $testService);
+        $this->assertEquals($injector->inject([new TestClass(), 'testMethod']), 3);
+    }
 }
 
+
+//Test function to inject into
+function testFunction($test)
+{
+    return $test->getFirst() + $test->getSecond();
+};
+
+//Test class to inject into
+class TestClass
+{
+    public function testMethod($test)
+    {
+        return $test->getFirst() + $test->getSecond();
+    }
+}
+
+//Test service
 class TestService
 {
     private $first;
