@@ -48,18 +48,18 @@ class Injector
     /**
      * Injects the required services into a class method
      *
-     * @param $className - The class the method belongs to
+     * @param $object - The object the method belongs to
      * @param $methodName - The method that will be used for injection
      *
      * @return mixed - The return value of the function that was injected
      */
-    private function injectMethod($className, $methodName)
+    private function injectMethod($object, $methodName)
     {
-        $reflection = new ReflectionMethod($className, $methodName);
+        $reflection = new ReflectionMethod($object, $methodName);
         $params = $reflection->getParameters();
         $dependencies = $this->getDependencies($params);
 
-        return call_user_func_array([new $className, $methodName], $dependencies);
+        return call_user_func_array([$object, $methodName], $dependencies);
     }
 
     /**

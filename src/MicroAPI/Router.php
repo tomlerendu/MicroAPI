@@ -64,7 +64,7 @@ class Router
                 $controller = explode('@', $rule['class']);
                 $controllerName = '\\App\\Controller\\' . $controller[0];
                 $controllerMethod = $controller[1];
-                $this->injector->inject([$controllerName, $controllerMethod]);
+                $this->injector->inject([new $controllerName(), $controllerMethod]);
             }
             //If the controller is a function
             else if(isset($rule['function']))
