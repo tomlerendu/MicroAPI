@@ -97,7 +97,7 @@ class Router
      */
     private function matchMethod($method, $requestMethod)
 	{
-        if($requestMethod == 'any' || $method == $requestMethod)
+        if($method == 'ANY' || $method == $requestMethod)
             return true;
 
 		return false;
