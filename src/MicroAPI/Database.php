@@ -2,44 +2,63 @@
 
 namespace MicroAPI;
 
-use Exception;
 use PDO;
 
 class Database
 {
-	//PDO database connection
 	private $connection;
+    private $fetchMode;
 
-	public function __construct($host, $name, $user, $pass)
+    /**
+     * A wrapper class for PDO
+     *
+     * @param $dsn - Data source name, the required information to connect to the database
+     * @param $user - The username to connect to the database
+     * @param $pass - The password to connect to the database
+     * @param $fetchMode - The fetch mode to use when using select statements
+     */
+	public function __construct($dsn, $user, $pass, $fetchMode)
 	{
-		//If a connection already exists return
-		if(isset($connection))
-			return;
-
-		//Attempt to make a connection to the database
-		try
-		{
-			$this->connection = new PDO('mysql:host=' . $host . ';dbname=' . $name, $user, $pass);
-		}
-		catch(Exception $e)
-		{
-			//Throw a more generic message to avoid database connection details leaking
-			throw new Exception('Error connecting to the database');
-            $this->connection = null;
-		}
+        $this->fetchMode = $fetchMode;
+		$this->connect($dsn, $user, $pass);
 	}
+
+    /**
+     * Make a connection to the database
+     *
+     * @param $dsn - Data source name, the required information to connect to the database
+     * @param $user - The username to connect to the database
+     * @param $pass - The password to connect to the database
+     * @throws Exception
+     */
+    public function connect($dsn, $user, $pass)
+    {
+        //Attempt to make a connection to the database
+        try
+        {
+            $this->connection = new PDO($dsn, $user, $pass);
+            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        }
+        catch(\Exception $e)
+        {
+            $this->connection = null;
+            //Throw a more generic message to avoid database connection details leaking
+            throw new Exception('Error connecting to the database');
+        }
+    }
 
 	/**
 	 * Performs a query on the database.
 	 * 
-	 * @param query
-     * @param params
+	 * @param query - The query to be performed on the database
+     * @param params - The parameters to be added to the query
 	 * @return - An executed database statement
+     * @throws Exception
 	 */
 	public function query($query, $params)
 	{
 		//Make sure a database connection exists
-        if(isset($connection))
+        if($this->connection !== null)
         {
             //If only one data value was passed in wrap it in an array
             if(!is_array($params))
@@ -47,30 +66,50 @@ class Database
 
             $statement = $this->connection->prepare($query);
 
-            //If no parameters were passed...
-            if($params == '')
+            //If no parameters were passed
+            if($params === '')
                 $statement->execute();
+            //If parameters were passed
             else
                 $statement->execute($params);
 
             return $statement;
         }
         else
-        {
-
-        }
+            throw new Exception('No database connection is active');
 	}
 
     /**
-     * @param $query
-     * @param array $params
-     * @param array $options
-     * @return mixed
+     * Perform a select query on the database and returns a statement ready to fetch
+     *
+     * @param $query - The query to be performed on the database
+     * @param array $params - The parameters to be added to the query
+     * @param int $fetchMode - The PDO fetch mode to use
      */
-    public function select($query, $params=[], $options=[])
+    public function select($query, $params=[], $fetchMode=null)
+    {
+        //If a fetch mode was defined use it, else use the one defined in the config
+        if($fetchMode === null)
+            $fetchMode = $this->fetchMode;
+
+        //Make the query
+        $statement = $this->query($query, $params);
+
+        return $statement;
+    }
+
+    /**
+     * Perform a select query on the database and returns an 2d array of rows
+     *
+     * @param $query - The query to be performed on the database
+     * @param array $params - The parameters to be added to the query
+     * @param int $fetchMode - The PDO fetch mode to use
+     */
+    public function selectAll($query, $params=[], $fetchMode=null)
 	{
-		//If a fetch mode was defined use it, else use the one defined in the config file
-		$fetchMode = (isset($options['fetch'])) ? $options['fetch'] : $this->config['fetch'];
+		//If a fetch mode was defined use it, else use the one defined in the config
+        if($fetchMode === null)
+            $fetchMode = $this->fetchMode;
 
 		//Make the query
 		$statement = $this->query($query, $params);
@@ -80,12 +119,14 @@ class Database
 		return $results;
 	}
 
-	/**
-	* Performs an insert query
-	*
-	* @return The primary key of the row inserted
-	*/
-	public function insert($query, $params=[])
+    /**
+     * Perform an insert query on the database
+     *
+     * @param $query - The query to be performed, should begin with "INSERT"
+     * @param array $params - Parameters to be added to the query
+     * @return int - The ID of the inserted row in the database
+     */
+    public function insert($query, $params=[])
 	{
 		//Make the query
 		$this->query($query, $params);
@@ -93,11 +134,13 @@ class Database
 		return $this->connection->lastInsertId();
 	}
 
-	/**
-	 * Performs an update query
-	 *
-	 * @return The number of rows affected by the query
-	 */ 
+    /**
+     * Perform an update query on the database
+     *
+     * @param $query - The query to be performed, should begin with "UPDATE"
+     * @param array $params - Parameters to be added to the query
+     * @return int - The number of rows the query effected
+     */
 	public function update($query, $params=[])
 	{
 		//Make the query
@@ -106,19 +149,21 @@ class Database
 		return $query->rowCount();
 	}
 
-	/**
-	 * Performs an delete query
-	 *
-	 * @return - The number of rows affected by the query
-	 */ 
-	public function delete($query, $params=[])
+    /**
+     * Perform a delete query on the database
+     *
+     * @param $query - The query to be performed, should begin with "DELETE"
+     * @param array $params - Parameters to be added to the query
+     * @return int - The number of rows the query effected
+     */
+    public function delete($query, $params=[])
 	{
 		//Make and return the query
 		return $this->update($query, $params);
 	}
 
 	/**
-	 * Access the database object directly 
+	 * Access the database directly
 	 *
 	 * @return - The PDO database object
 	 */

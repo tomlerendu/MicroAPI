@@ -7,11 +7,10 @@ return function($config, $injector)
     $config->set('microapi.subDirectory', '/microapi/src/public');
 
     //Database
+    $config->set('microapi.database.dsn', 'mysql:host=127.0.0.1;dbname=startana;port=3306');
     $config->set('microapi.database.user', 'root');
-    $config->set('microapi.database.pass', '');
-    $config->set('microapi.database.name', '');
-    $config->set('microapi.database.host', 'localhost');
-    $config->set('microapi.database.fetch', PDO::FETCH_ASSOC);
+    $config->set('microapi.database.pass', 'root');
+    $config->set('microapi.database.fetchMode', PDO::FETCH_ASSOC);
 
     //Response - The default values for a response if one wasn't defined in the call Response::make()
     $config->set('microapi.response.format', '\MicroAPI\Response\JsonResponse');
