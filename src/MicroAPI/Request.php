@@ -30,9 +30,9 @@ class Request
 
 		//Store the path
         if($subDirectory === '')
-		    $this->path = $_SERVER['REQUEST_URI'];
+		    $this->path = strtok($_SERVER['REQUEST_URI'], '?');
         else
-            $this->path = explode($subDirectory, $_SERVER['REQUEST_URI'], 2)[1];
+            $this->path = strtok(explode($subDirectory, $_SERVER['REQUEST_URI'], 2)[1], '?');
 
 		//Store the useragent
 		$this->userAgent = $_SERVER['HTTP_USER_AGENT'];
