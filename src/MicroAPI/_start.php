@@ -9,7 +9,7 @@ $autoloader->addNamespace('MicroAPI', MICROAPI_PATH);
 
 // Create the dependency injector
 
-$injector = new \MicroAPI\Injector();
+$injector = \MicroAPI\Injector::getInstance();
 $config = new \MicroAPI\Config();
 $injector->addService('injector', $injector);
 $injector->addService('config', $config);

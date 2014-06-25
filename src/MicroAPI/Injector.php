@@ -9,6 +9,22 @@ use Exception;
 
 class Injector
 {
+    /**
+     * Returns the single instance of the injector
+     *
+     * @return Injector
+     */
+    public static function getInstance()
+    {
+        static $instance = null;
+        if ($instance === null) {
+            $instance = new Injector();
+        }
+        return $instance;
+    }
+
+    private function __construct() {}
+
     private $services = [];
 
     /**
