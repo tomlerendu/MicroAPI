@@ -1,7 +1,7 @@
 <?php
 
-function postName($request, $response)
+function postName($request, $response, $route)
 {
-    $data = ['greeting' => 'Hi, ' . $request->getPathWildcard('name')];
+    $data = ['greeting' => 'Hi, ' . $route->getWildcard('name'), 'method' => 'You used ' . $request->getMethod()];
     $response->make($data);
 };

@@ -3,9 +3,9 @@ namespace App\Controller;
 
 class Example
 {
-	public function getName($request, $response)
+	public function getName($request, $response, $route)
 	{
-		$data = ['greeting' => 'Hi, ' . $request->getPathWildcard('name')];
-		$response->make($data);
+        $data = ['greeting' => 'Hi, ' . $route->getWildcard('name'), 'method' => 'You used ' . $request->getMethod()];
+        $response->make($data);
 	}
 }
