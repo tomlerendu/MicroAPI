@@ -12,7 +12,7 @@ class Model
      * @param $serviceName - The name of the service
      * @return mixed
      */
-    public function getService($serviceName)
+    public static function _service($serviceName)
     {
         return Injector::getInstance()->getService($serviceName);
     }
