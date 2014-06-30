@@ -2,9 +2,7 @@
 
 namespace MicroAPI;
 
-use MicroAPI\Injector;
-
-class Model
+trait Model
 {
     /**
      * Access a service from the injector
