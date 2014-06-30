@@ -24,6 +24,7 @@ $injector->inject(require(APP_PATH . DIRECTORY_SEPARATOR . 'config.php'));
 $injector->addService('database', '\MicroAPI\Database', $config->get('microapi.database'));
 $injector->addService('request', '\MicroAPI\Request', ['subDirectory' => $config->get('microapi.subDirectory')]);
 $injector->addService('response', '\MicroAPI\Response', $config->get('microapi.response'));
+$injector->addService('route', '\MicroAPI\Route');
 
 // Run the app defined setup function
 

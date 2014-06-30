@@ -48,15 +48,26 @@ class Router
             return;
 
         $request = $this->injector->getService('request');
+        $route = $this->injector->getService('route');
 
         if(
+            //If the HTTP methods match
             $this->matchMethod($rule['method'], $request->getMethod()) &&
+            //If the route matches
             ($wildcards = $this->matchRoute($rule['route'], $request->getPath())) !== false &&
-            ((isset($rule['require']) && $this->injector->inject($rule['require'])) || !isset($rule['require']))
+            (
+                //If there is no require function
+                !isset($rule['require']) ||
+                //Or if the require function does not return false
+                (isset($rule['require']) && ($require = $this->injector->inject($rule['require'])) !== false)
+            )
         )
         {
-            //Pass the path wildcards to the request service
-            $request->setPathWildcards($wildcards);
+            //Pass the route wildcards to the route service
+            $route->setWildcards($wildcards);
+            //Pass the return of the require function ot the route service
+            if(isset($rule['require']))
+                $route->setRequire($require);
 
             //If the controller is a method
             if(isset($rule['class']))

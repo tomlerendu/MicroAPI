@@ -80,29 +80,4 @@ class Request
 	{
 		return $this->userAgent;
 	}
-
-    /**
-     * @param $pathWildcards
-     */
-    public function setPathWildcards($pathWildcards)
-    {
-        $this->pathWildcards = $pathWildcards;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getPathWildcards()
-    {
-        return isset($this->pathWildcards) ? $this->pathWildcards : false;
-    }
-
-    /**
-     * @param $index
-     * @return bool
-     */
-    public function getPathWildcard($index)
-    {
-        return isset($this->pathWildcards[$index]) ? $this->pathWildcards[$index] : false;
-    }
 }
