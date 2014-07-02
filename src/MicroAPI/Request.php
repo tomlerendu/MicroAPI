@@ -7,24 +7,23 @@ class Request
 	private $method;
 	private $params;
 	private $path;
-    private $pathWildcards;
 	private $userAgent;
 
-	public function __construct($subDirectory)
+	public function __construct($subDirectory='')
 	{
 		//Store the request method
 		$this->method = $_SERVER['REQUEST_METHOD'];
 
-		//Store the data for each request type into the $this->params variable
+        //Store the get and post params
+        $this->params['GET'] = $_GET;
+        $this->params['POST'] = $_POST;
+
+		//Parse the PUT or DELETE params if required
 		switch($this->method)
 		{
-			case 'GET':     $this->params = $_GET;
+			case 'PUT':     parse_str(file_get_contents('php://input'), $this->params['PUT']);
                             break;
-			case 'POST':    $this->params = $_POST;
-                            break;
-			case 'PUT':     parse_str(file_get_contents('php://input'), $this->params);
-                            break;
-			case 'DELETE':  parse_str(file_get_contents('php://input'), $this->params);
+			case 'DELETE':  parse_str(file_get_contents('php://input'), $this->params['DELETE']);
 				            break;
 		}
 
@@ -34,14 +33,14 @@ class Request
         else
             $this->path = strtok(explode($subDirectory, $_SERVER['REQUEST_URI'], 2)[1], '?');
 
-		//Store the useragent
+		//Store the user agent
 		$this->userAgent = $_SERVER['HTTP_USER_AGENT'];
 	}
 
 	/**
-	 * The method the request was using. GET, POST, PUT or DELETE.
+	 * The HTTP method the request used. GET, POST, PUT or DELETE.
 	 *
-	 * @return The method the request was using.
+	 * @return - The method the request was using.
 	 */
 	public function getMethod()
 	{
@@ -49,34 +48,73 @@ class Request
 	}
 
     /**
-     * @param $var
-     * @return bool
+     * Get a parameter from the request
+     *
+     * @param $name - The name of the parameter
+     * @param $method string - The HTTP method the param was sent over
+     * @return mixed - The parameter if it exists, false if not
      */
-    public function getParam($var)
+    public function getParam($name, $method=null)
 	{
-		return (isset($this->params[$var])) ? $this->params[$var] : false;
+        if($method !== null)
+            $method = strtoupper($method);
+
+        //If a valid method was specified
+        if($method !== null && $method === ('GET' || 'POST' || 'PUT' || 'DELETE'))
+            return $this->params[$method][$name];
+
+        //If the method is PUT or DELETE and a PUT or DELETE index exists with that name
+		elseif(
+            ($this->method === 'PUT' && isset($this->params['PUT'][$name])) ||
+            ($this->method === 'DELETE' && isset($this->params['DELETE'][$name]))
+        )
+            return $this->params[$this->method][$name];
+
+        //If a post item exists with that name and GET is not set
+        elseif(isset($this->params['POST'][$name]) && $method !== 'GET')
+            return $this->params['POST'][$name];
+
+        //If a get item exists with that name
+        elseif(isset($this->params['GET'][$name]))
+            return $this->params['GET'][$name];
+
+        //If the item doesn't exist
+        else
+            return false;
 	}
 
-	/**
-	 *
-	 */
-	public function getPath()
+    /**
+     * Returns the path the user requested
+     *
+     * @return string - The path the user requested
+     */
+    public function getPath()
 	{
 		return $this->path;
 	}
 
-	/**
-	 *
-	 */
-	public function getPathSections()
+
+    /**
+     * Returns the path the user requested as an array
+     *
+     * @return array - The sections of the path
+     */
+    public function getPathSections()
 	{
-		return explode('/', $this->path);
+		$sections = explode('/', $this->path);
+
+        if($sections[0] === '') array_shift($sections);
+        if($sections[count($sections)-1] === '') array_pop($sections);
+
+        return $sections;
 	}
 
-	/**
-	 *
-	 */
-	public function getUserAgent()
+    /**
+     * Returns the user agent of the browser making the request
+     *
+     * @return string - The user agent
+     */
+    public function getUserAgent()
 	{
 		return $this->userAgent;
 	}
