@@ -162,7 +162,31 @@ class Database
 		return $this->update($query, $params);
 	}
 
-	/**
+    /**
+     * Begin a database transaction
+     */
+    public function beginTransaction()
+    {
+        return $this->connection->beginTransaction();
+    }
+
+    /**
+     * Commit a database transaction
+     */
+    public function commit()
+    {
+        return $this->connection->commit();
+    }
+
+    /**
+     * Rollback a database transaction
+     */
+    public function rollBack()
+    {
+        return $this->connection->rollBack();
+    }
+
+    /**
 	 * Access the database directly
 	 *
 	 * @return - The PDO database object
