@@ -145,8 +145,8 @@ class Router
 
                 if(preg_match($matchPattern, $requestRoute[$i], $matchedParams))
                 {
-                    for($i=0; $i<count($routeParams); $i++)
-                        $params[trim($routeParams[$i], '()')] = $matchedParams[$i+1];
+                    for($j=0; $j<count($routeParams); $j++)
+                        $params[trim($routeParams[$j], '()')] = $matchedParams[$j+1];
                 }
             }
             //If there's no wildcard make sure the route and path section match
