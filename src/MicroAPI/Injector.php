@@ -1,5 +1,4 @@
 <?php
-
 namespace MicroAPI;
 
 use ReflectionFunction;
@@ -37,7 +36,7 @@ class Injector
     public function addService($paramName, $service, $constructorArgs=null)
     {
         //If the service hasn't been initialised
-        if(is_string($service))
+        if (is_string($service))
             $this->services[$paramName] = [$service, $constructorArgs];
         //If the service has been initialised
         else
@@ -54,10 +53,10 @@ class Injector
     public function inject($procedure)
     {
         //If a class was passed
-        if(is_array($procedure) && count($procedure) === 2)
+        if (is_array($procedure) && count($procedure) === 2)
             return $this->injectMethod($procedure[0], $procedure[1]);
         //If a function was passed
-        else if(!is_array($procedure))
+        elseif (!is_array($procedure))
             return $this->injectFunction($procedure);
     }
 
@@ -103,13 +102,11 @@ class Injector
     private function getDependencies($params)
     {
         $dependencies = [];
-        foreach($params as $param)
+        foreach ($params as $param)
         {
-            if(isset($this->services[$param->name]))
-            {
+            if (isset($this->services[$param->name])) {
                 $dependencies[] = $this->getService($param->name);
-            }
-            else
+            } else
                 throw new Exception("Could not inject service '" . $param->name . "'.");
         }
 
@@ -125,21 +122,18 @@ class Injector
     public function getService($paramName)
     {
         //If the service exists
-        if(isset($this->services[$paramName]))
-        {
+        if (isset($this->services[$paramName])) {
             //If the service instance hasn't been created yet
-            if(is_array($this->services[$paramName]))
-            {
+            if (is_array($this->services[$paramName])) {
                 $service = $this->services[$paramName];
                 //If the service has parameters in the constructor
-                if($service[1] !== null)
-                {
+                if ($service[1] !== null) {
                     //Get the arguments the constructor takes
                     $class = new ReflectionClass($service[0]);
                     $constructorArguments = $class->getConstructor()->getParameters();
                     //Create an array of parameters
                     $constructorParams = [];
-                    foreach($constructorArguments as $constructorArgument)
+                    foreach ($constructorArguments as $constructorArgument)
                     {
                         $constructorParams[$constructorArgument->getName()] =
                             (isset($service[1][$constructorArgument->getName()])) ?

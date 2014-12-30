@@ -1,7 +1,5 @@
 <?php
-
 namespace MicroAPI;
-
 
 class Exception extends \Exception
 {

@@ -1,5 +1,4 @@
 <?php
-
 namespace MicroAPI;
 
 trait Model

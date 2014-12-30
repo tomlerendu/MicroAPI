@@ -50,7 +50,7 @@ class Router
         $request = $this->injector->getService('request');
         $route = $this->injector->getService('route');
 
-        if(
+        if (
             //If the HTTP methods match
             $this->matchMethod($rule['method'], $request->getMethod()) &&
             //If the route matches
@@ -61,16 +61,15 @@ class Router
                 //Or if the require function does not return false
                 (isset($rule['require']) && ($require = $this->injector->inject($rule['require'])) !== false)
             )
-        )
-        {
+        ) {
             //Pass the route wildcards to the route service
             $route->setWildcards($wildcards);
             //Pass the return of the require function ot the route service
-            if(isset($rule['require']))
+            if (isset($rule['require']))
                 $route->setRequire($require);
 
             //If the controller is a method
-            if(isset($rule['class']))
+            if (isset($rule['class']))
             {
                 $controller = explode('@', $rule['class']);
                 $controllerName = '\\App\\Controller\\' . $controller[0];
@@ -78,17 +77,13 @@ class Router
                 $this->injector->inject([new $controllerName(), $controllerMethod]);
             }
             //If the controller is a function
-            else if(isset($rule['function']))
-            {
+            else if (isset($rule['function'])) {
                 //If the location of the function was specified. EG 'filename@functioname'.
-                if(($split = strpos($rule['function'], '@')) !== false)
-                {
+                if (($split = strpos($rule['function'], '@')) !== false) {
                     $funcFile = substr($rule['function'], 0, $split);
                     $funcName = substr($rule['function'], $split+1);
-                }
-                //If the location of the function wasn't specified
-                else
-                {
+                } else {
+                    //If the location of the function wasn't specified
                     $funcFile = $rule['function'];
                     $funcName = $rule['function'];
                 }
@@ -108,7 +103,7 @@ class Router
      */
     private function matchMethod($method, $requestMethod)
 	{
-        if($method == 'ANY' || $method == $requestMethod)
+        if ($method == 'ANY' || $method == $requestMethod)
             return true;
 
 		return false;
@@ -127,30 +122,27 @@ class Router
 		$params = [];
 
 		//If the route and request path don't have the same number of sections
-		if(count($route) !== count($requestRoute))
+		if (count($route) !== count($requestRoute))
 			return false;
 
 		//For each route and path part
-		for($i=0; $i<count($route); $i++)
-		{
+		for ($i=0; $i<count($route); $i++) {
             $regex = preg_match_all('(\(.*?\))', $route[$i], $routeParams);
             $routeParams = $routeParams[0];
 
             //If there are wildcards
-            if($regex)
-            {
+            if ($regex) {
                 $quotedRouteParams = array_map('preg_quote', $routeParams);
                 $matchPattern = preg_quote($route[$i]);
                 $matchPattern = '/^' . str_replace($quotedRouteParams, '(.*?)', $matchPattern) . '$/';
 
-                if(preg_match($matchPattern, $requestRoute[$i], $matchedParams))
-                {
-                    for($j=0; $j<count($routeParams); $j++)
+                if (preg_match($matchPattern, $requestRoute[$i], $matchedParams)) {
+                    for ($j=0; $j<count($routeParams); $j++)
                         $params[trim($routeParams[$j], '()')] = $matchedParams[$j+1];
                 }
             }
             //If there's no wildcard make sure the route and path section match
-            else if($route[$i] !== $requestRoute[$i])
+            elseif ($route[$i] !== $requestRoute[$i])
                 return false;
 		}
 

@@ -1,5 +1,4 @@
 <?php
-
 namespace MicroAPI;
 
 class Request
@@ -19,12 +18,13 @@ class Request
         $this->params['POST'] = $_POST;
 
 		//Parse the PUT or DELETE params if required
-		switch($this->method)
-		{
-			case 'PUT':     parse_str(file_get_contents('php://input'), $this->params['PUT']);
-                            break;
-			case 'DELETE':  parse_str(file_get_contents('php://input'), $this->params['DELETE']);
-				            break;
+		switch($this->method) {
+			case 'PUT':
+                parse_str(file_get_contents('php://input'), $this->params['PUT']);
+                break;
+			case 'DELETE':
+                parse_str(file_get_contents('php://input'), $this->params['DELETE']);
+                break;
 		}
 
 		//Store the path
@@ -56,26 +56,26 @@ class Request
      */
     public function getParam($name, $method=null)
 	{
-        if($method !== null)
+        if ($method !== null)
             $method = strtoupper($method);
 
         //If a valid method was specified
-        if($method !== null && $method === ('GET' || 'POST' || 'PUT' || 'DELETE'))
+        if ($method !== null && $method === ('GET' || 'POST' || 'PUT' || 'DELETE'))
             return $this->params[$method][$name];
 
         //If the method is PUT or DELETE and a PUT or DELETE index exists with that name
-		elseif(
+		elseif (
             ($this->method === 'PUT' && isset($this->params['PUT'][$name])) ||
             ($this->method === 'DELETE' && isset($this->params['DELETE'][$name]))
         )
             return $this->params[$this->method][$name];
 
         //If a post item exists with that name and GET is not set
-        elseif(isset($this->params['POST'][$name]) && $method !== 'GET')
+        elseif (isset($this->params['POST'][$name]) && $method !== 'GET')
             return $this->params['POST'][$name];
 
         //If a get item exists with that name
-        elseif(isset($this->params['GET'][$name]))
+        elseif (isset($this->params['GET'][$name]))
             return $this->params['GET'][$name];
 
         //If the item doesn't exist
@@ -103,8 +103,11 @@ class Request
 	{
 		$sections = explode('/', $this->path);
 
-        if($sections[0] === '') array_shift($sections);
-        if($sections[count($sections)-1] === '') array_pop($sections);
+        if ($sections[0] === '')
+            array_shift($sections);
+
+        if ($sections[count($sections)-1] === '')
+            array_pop($sections);
 
         return $sections;
 	}

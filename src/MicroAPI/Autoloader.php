@@ -29,17 +29,17 @@ class Autoloader
 		$prefix = $className[0];
 		$path = strtolower(substr($className[1], 0, strrpos($className[1], '\\')));
 		$name = strrchr($className[1], '\\');
-		if($name === false) $name = $className[1];
+		if ($name === false)
+            $name = $className[1];
 		$name = ltrim($name, '\\');
 
-		if(isset($this->prefixes[$prefix]))
-		{
+		if (isset($this->prefixes[$prefix])) {
 			$path = str_replace('\\', DIRECTORY_SEPARATOR, $path);
-			$classString = realpath($this->prefixes[$prefix] . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR . $name . '.php');
+            $classLoc = $this->prefixes[$prefix] . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR . $name . '.php';
+            $classLoc = realpath($classLoc);
 
-			return $this->requireClass($classString);
-		}
-		else
+			return $this->requireClass($classLoc);
+		} else
 			return false;
 	}
 
@@ -51,8 +51,7 @@ class Autoloader
      */
     private function requireClass($location)
 	{
-		if(file_exists($location))
-		{
+		if (file_exists($location)) {
 			require $location;
 			return true;
 		}
@@ -78,7 +77,7 @@ class Autoloader
      */
     public function addNamespaces($namespaceArray)
 	{
-		foreach($namespaceArray as $prefix => $directory)
+		foreach ($namespaceArray as $prefix => $directory)
 			$this->addNamespace($prefix, $directory);
 	}
 }

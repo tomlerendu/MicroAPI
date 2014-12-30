@@ -1,5 +1,4 @@
 <?php
-
 namespace MicroAPI;
 
 class Config
@@ -17,13 +16,12 @@ class Config
         $key = explode('.', $key);
         $ref = &$this->config;
 
-        for($i=0; $i<count($key); $i++)
-        {
+        for ($i=0; $i<count($key); $i++) {
             $keyPart = $key[$i];
 
-            if($i === count($key)-1)
+            if ($i === count($key)-1)
                 $ref[$keyPart] = $value;
-            if(!isset($ref[$keyPart]))
+            if (!isset($ref[$keyPart]))
                 $ref[$keyPart] = [];
 
             $ref = &$ref[$keyPart];
@@ -41,9 +39,8 @@ class Config
         $key = explode('.', $key);
         $ref = &$this->config;
 
-        foreach($key as $keyPart)
-        {
-            if(isset($ref[$keyPart]))
+        foreach ($key as $keyPart) {
+            if (isset($ref[$keyPart]))
                 $ref = &$ref[$keyPart];
             else
                 return null;
@@ -63,17 +60,15 @@ class Config
         $key = explode('.', $key);
         $ref = &$this->config;
 
-        for($i=0; $i<count($key); $i++)
-        {
+        for ($i=0; $i<count($key); $i++) {
             $keyPart = $key[$i];
 
-            if($i === count($key)-1)
-            {
+            if ($i === count($key)-1) {
                 $value = $ref[$keyPart];
                 unset($ref[$keyPart]);
                 return $value;
             }
-            else if(isset($ref[$keyPart]))
+            elseif (isset($ref[$keyPart]))
                 $ref = &$ref[$keyPart];
             else
                 return null;

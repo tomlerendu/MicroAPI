@@ -1,5 +1,4 @@
 <?php
-
 namespace MicroAPI;
 
 use PDO;
@@ -34,16 +33,13 @@ class Database
     public function connect($dsn, $user, $pass)
     {
         //Attempt to make a connection to the database
-        try
-        {
+        try {
             $this->connection = new PDO($dsn, $user, $pass);
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        }
-        catch(\Exception $e)
-        {
+        } catch(\Exception $e) {
             $this->connection = null;
             //Throw a more generic message to avoid database connection details leaking
-            throw new Exception('Error connecting to the database');
+            throw new Exception('Error connecting to the database.');
         }
     }
 
@@ -58,24 +54,22 @@ class Database
 	public function query($query, $params)
 	{
 		//Make sure a database connection exists
-        if($this->connection !== null)
-        {
+        if ($this->connection !== null) {
             //If only one data value was passed in wrap it in an array
-            if(!is_array($params))
+            if (!is_array($params))
                 $params = [$params];
 
             $statement = $this->connection->prepare($query);
 
             //If no parameters were passed
-            if($params === '')
+            if ($params === '')
                 $statement->execute();
             //If parameters were passed
             else
                 $statement->execute($params);
 
             return $statement;
-        }
-        else
+        } else
             throw new Exception('No database connection is active');
 	}
 
@@ -89,7 +83,7 @@ class Database
     public function select($query, $params=[], $fetchMode=null)
     {
         //If a fetch mode was defined use it, else use the one defined in the config
-        if($fetchMode === null)
+        if ($fetchMode === null)
             $fetchMode = $this->fetchMode;
 
         //Make the query
@@ -108,7 +102,7 @@ class Database
     public function selectAll($query, $params=[], $fetchMode=null)
 	{
 		//If a fetch mode was defined use it, else use the one defined in the config
-        if($fetchMode === null)
+        if ($fetchMode === null)
             $fetchMode = $this->fetchMode;
 
 		//Make the query
