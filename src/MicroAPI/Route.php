@@ -13,10 +13,7 @@ class Route
      */
     public function setWildcards($wildcards)
     {
-        for($i=0; $i<count($wildcards); $i++)
-            $wildcards[$i] = urldecode($wildcards[$i]);
-
-        $this->wildcards = $wildcards;
+        $this->wildcards = array_map('urldecode', $wildcards);
     }
 
     /**
