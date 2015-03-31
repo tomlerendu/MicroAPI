@@ -1,5 +1,5 @@
 <?php
-namespace MicroAPI;
+namespace TomLerendu\MicroAPI;
 
 class Exception extends \Exception
 {

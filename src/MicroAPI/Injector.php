@@ -1,5 +1,5 @@
 <?php
-namespace MicroAPI;
+namespace TomLerendu\MicroAPI;
 
 use ReflectionFunction;
 use ReflectionMethod;
