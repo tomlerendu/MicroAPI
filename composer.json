@@ -9,6 +9,7 @@
     "autoload": {
         "psr-4": {
             "TomLerendu\\MicroAPI\\": "src/MicroAPI/",
+            "TomLerendu\\MicroApiTests\\": "tests/MicroAPI/",
             "App\\": "src/App/"
         }
     },
