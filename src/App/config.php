@@ -1,6 +1,9 @@
 <?php
 
-return function($config, $injector)
+use TomLerendu\MicroAPI\Config;
+use TomLerendu\MicroAPI\Injector\Injector;
+
+return function(Config $config, Injector $injector)
 {
 
     //Sub directory - If the public directory is not at the domain root set the sub directory it is in here

@@ -1,6 +1,8 @@
 <?php
 
-return function($router)
+use TomLerendu\MicroAPI\Router;
+
+return function(Router $router)
 {
 
     $router->get([
