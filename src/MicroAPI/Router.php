@@ -68,29 +68,11 @@ class Router
             if (isset($rule['require']))
                 $route->setRequire($require);
 
-            //If the controller is a method
-            if (isset($rule['class']))
-            {
-                $controller = explode('@', $rule['class']);
-                $controllerName = '\\App\\Controller\\' . $controller[0];
-                $controllerMethod = $controller[1];
-                $this->injector->inject([new $controllerName(), $controllerMethod]);
-            }
-            //If the controller is a function
-            else if (isset($rule['function'])) {
-                //If the location of the function was specified. EG 'filename@functioname'.
-                if (($split = strpos($rule['function'], '@')) !== false) {
-                    $funcFile = substr($rule['function'], 0, $split);
-                    $funcName = substr($rule['function'], $split+1);
-                } else {
-                    //If the location of the function wasn't specified
-                    $funcFile = $rule['function'];
-                    $funcName = $rule['function'];
-                }
 
-                require_once APP_PATH . DIRECTORY_SEPARATOR . 'Controller' . DIRECTORY_SEPARATOR . $funcFile . '.php';
-                $this->injector->inject($funcName);
-            }
+            $controller = explode('@', $rule['to']);
+            $controllerName = '\\App\\Controller\\' . $controller[0];
+            $controllerMethod = $controller[1];
+            $this->injector->inject([new $controllerName(), $controllerMethod]);
 
             $this->matchedRule = true;
         }
