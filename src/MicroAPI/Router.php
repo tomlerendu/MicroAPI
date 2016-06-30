@@ -59,7 +59,7 @@ class Router
                 //If there is no require function
                 !isset($rule['require']) ||
                 //Or if the require function does not return false
-                (isset($rule['require']) && ($require = $this->injector->inject($rule['require'])) !== false)
+                (isset($rule['require']) && ($require = $this->injector->injectFunction($rule['require'])) !== false)
             )
         ) {
             //Pass the route wildcards to the route service
@@ -70,9 +70,9 @@ class Router
 
 
             $controller = explode('@', $rule['to']);
-            $controllerName = '\\App\\Controller\\' . $controller[0];
+            $controllerName = '\App\Controller\\' . $controller[0];
             $controllerMethod = $controller[1];
-            $this->injector->inject(new $controllerName(), $controllerMethod);
+            $this->injector->injectMethod(new $controllerName(), $controllerMethod);
 
             $this->matchedRule = true;
         }
