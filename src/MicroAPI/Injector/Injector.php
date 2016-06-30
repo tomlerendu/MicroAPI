@@ -1,7 +1,6 @@
 <?php
-namespace TomLerendu\MicroAPI;
+namespace TomLerendu\MicroAPI\Injector;
 
-use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionClass;
 use Exception;
@@ -51,7 +50,7 @@ class Injector
      *
      * @return mixed - The return value of the function that was injected
      */
-    private function inject($object, $methodName)
+    public function inject($object, $methodName)
     {
         $reflection = new ReflectionMethod($object, $methodName);
         $params = $reflection->getParameters();
