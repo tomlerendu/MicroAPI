@@ -72,7 +72,7 @@ class Router
             $controller = explode('@', $rule['to']);
             $controllerName = '\\App\\Controller\\' . $controller[0];
             $controllerMethod = $controller[1];
-            $this->injector->inject([new $controllerName(), $controllerMethod]);
+            $this->injector->inject(new $controllerName(), $controllerMethod);
 
             $this->matchedRule = true;
         }

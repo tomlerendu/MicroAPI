@@ -9,7 +9,7 @@ use Exception;
 class Injector
 {
     /**
-     * Returns the single instance of the injector
+     * Returns the single instance of the injector.
      *
      * @return Injector
      */
@@ -27,7 +27,7 @@ class Injector
     private $services = [];
 
     /**
-     * Add a service that the injector can inject into functions
+     * Add a service that the injector can inject into functions.
      *
      * @param $paramName - The name of the service
      * @param $service - The service, either a class name (string) or the actual service
@@ -44,52 +44,20 @@ class Injector
     }
 
     /**
-     * Injects services into a given procedure
-     *
-     * @param $procedure - The procedure services will be injected into
-     *
-     * @return mixed - The return value of the function or method that was injected
-     */
-    public function inject($procedure)
-    {
-        //If a class was passed
-        if (is_array($procedure) && count($procedure) === 2)
-            return $this->injectMethod($procedure[0], $procedure[1]);
-        //If a function was passed
-        elseif (!is_array($procedure))
-            return $this->injectFunction($procedure);
-    }
-
-    /**
-     * Injects the required services into a class method
+     * Injects the required services into a given objects method
      *
      * @param $object - The object the method belongs to
      * @param $methodName - The method that will be used for injection
      *
      * @return mixed - The return value of the function that was injected
      */
-    private function injectMethod($object, $methodName)
+    private function inject($object, $methodName)
     {
         $reflection = new ReflectionMethod($object, $methodName);
         $params = $reflection->getParameters();
         $dependencies = $this->getDependencies($params);
 
         return call_user_func_array([$object, $methodName], $dependencies);
-    }
-
-    /**
-     * Injects the required services into a function
-     *
-     * @param $functionName - The name of the function that will be used for injection
-     * @return mixed - The return value of the function that was injected
-     */
-    private function injectFunction($functionName)
-    {
-        $reflection = new ReflectionFunction($functionName);
-        $params = $reflection->getParameters();
-        $dependencies = $this->getDependencies($params);
-
-        return call_user_func_array($functionName, $dependencies);
     }
 
     /**
