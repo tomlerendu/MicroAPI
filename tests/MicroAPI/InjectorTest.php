@@ -9,34 +9,35 @@ class InjectorTest extends \MicroAPITestCase
     public function testAddingService()
     {
         $injector = Injector::getInstance();
-        $injector->addService('test', '\TestService');
-        $service = $injector->getService('test');
-        $this->assertTrue(get_class($service) === 'TestService');
+        $injector->addService(TestService::class);
+        $service = $injector->getService(TestService::class);
+        $this->assertTrue($service instanceof TestService);
     }
 
     public function testAddingServiceWithParams()
     {
         $injector = Injector::getInstance();
-        $injector->addService('test', '\TestService', ['second'=>'2', 'first'=>'1']);
-        $service = $injector->getService('test');
-        $this->assertTrue($service->getFirst() === '1' && $service->getSecond() == '2');
+        $injector->addService(TestService::class, ['foo', 'bar']);
+        $service = $injector->getService(TestService::class);
+        $this->assertEquals($service->getFirst(), 'foo');
+        $this->assertEquals($service->getSecond(), 'bar');
     }
 
     public function testSingleInstanceOfService()
     {
         $injector = Injector::getInstance();
-        $injector->addService('test', '\TestService');
-        $service1 = $injector->getService('test');
-        $service2 = $injector->getService('test');
+        $injector->addService(TestService::class);
+        $service1 = $injector->getService(TestService::class);
+        $service2 = $injector->getService(TestService::class);
         $this->assertEquals($service1, $service2);
     }
 
     public function testObjectAsService()
     {
         $injector = Injector::getInstance();
-        $testService = new TestService(1, 2);
-        $injector->addService('test', $testService);
-        $service = $injector->getService('test');
+        $testService = new TestService();
+        $injector->addService($testService);
+        $service = $injector->getService(TestService::class);
         $this->assertEquals($service, $testService);
     }
 
@@ -44,7 +45,7 @@ class InjectorTest extends \MicroAPITestCase
     {
         $injector = Injector::getInstance();
         $testService = new TestService(1, 2);
-        $injector->addService('test', $testService);
+        $injector->addService($testService);
 
         $testFunction = function(TestService $test) {
             return $test->getFirst() + $test->getSecond();
@@ -57,15 +58,15 @@ class InjectorTest extends \MicroAPITestCase
     {
         $injector = Injector::getInstance();
         $testService = new TestService(1, 2);
-        $injector->addService('test', $testService);
-        $this->assertEquals($injector->injectFunction('testFunction'), 3);
+        $injector->addService($testService);
+        $this->assertEquals($injector->injectFunction('\TomLerendu\MicroAPITests\testFunction'), 3);
     }
 
     public function testInjectingMethod()
     {
         $injector = Injector::getInstance();
         $testService = new TestService(1, 2);
-        $injector->addService('test', $testService);
+        $injector->addService($testService);
         $this->assertEquals($injector->injectMethod(new TestClass(), 'testMethod'), 3);
     }
 }
@@ -92,7 +93,7 @@ class TestService
     private $first;
     private $second;
 
-    public function __construct($first, $second)
+    public function __construct($first = 1, $second = 2)
     {
         $this->first = $first;
         $this->second = $second;
