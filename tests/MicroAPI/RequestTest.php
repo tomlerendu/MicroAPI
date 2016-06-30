@@ -1,8 +1,10 @@
 <?php
 
-use MicroAPI\Request;
+namespace TomLerendu\MicroAPITests;
 
-class RequestTest extends PHPUnit_Framework_TestCase
+use TomLerendu\MicroAPI\Request;
+
+class RequestTest extends \MicroAPITestCase
 {
     public function testGettingMethod()
     {

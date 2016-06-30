@@ -1,13 +1,15 @@
 <?php
 
-use MicroAPI\Injector;
+namespace TomLerendu\MicroAPITests;
 
-class InjectorTest extends PHPUnit_Framework_TestCase
+use TomLerendu\MicroAPI\Injector\Injector;
+
+class InjectorTest extends \MicroAPITestCase
 {
     public function testAddingService()
     {
         $injector = Injector::getInstance();
-        $injector->addService('test', 'TestService');
+        $injector->addService('test', '\TestService');
         $service = $injector->getService('test');
         $this->assertTrue(get_class($service) === 'TestService');
     }
@@ -15,7 +17,7 @@ class InjectorTest extends PHPUnit_Framework_TestCase
     public function testAddingServiceWithParams()
     {
         $injector = Injector::getInstance();
-        $injector->addService('test', 'TestService', ['second'=>'2', 'first'=>'1']);
+        $injector->addService('test', '\TestService', ['second'=>'2', 'first'=>'1']);
         $service = $injector->getService('test');
         $this->assertTrue($service->getFirst() === '1' && $service->getSecond() == '2');
     }
@@ -23,7 +25,7 @@ class InjectorTest extends PHPUnit_Framework_TestCase
     public function testSingleInstanceOfService()
     {
         $injector = Injector::getInstance();
-        $injector->addService('test', 'TestService');
+        $injector->addService('test', '\TestService');
         $service1 = $injector->getService('test');
         $service2 = $injector->getService('test');
         $this->assertEquals($service1, $service2);
@@ -32,7 +34,7 @@ class InjectorTest extends PHPUnit_Framework_TestCase
     public function testObjectAsService()
     {
         $injector = Injector::getInstance();
-        $testService = new TestService();
+        $testService = new TestService(1, 2);
         $injector->addService('test', $testService);
         $service = $injector->getService('test');
         $this->assertEquals($service, $testService);
@@ -44,12 +46,11 @@ class InjectorTest extends PHPUnit_Framework_TestCase
         $testService = new TestService(1, 2);
         $injector->addService('test', $testService);
 
-        $testFunction = function($test)
-        {
+        $testFunction = function(TestService $test) {
             return $test->getFirst() + $test->getSecond();
         };
 
-        $this->assertEquals($injector->inject($testFunction), 3);
+        $this->assertEquals($injector->injectFunction($testFunction), 3);
     }
 
     public function testInjectingFunction()
@@ -57,7 +58,7 @@ class InjectorTest extends PHPUnit_Framework_TestCase
         $injector = Injector::getInstance();
         $testService = new TestService(1, 2);
         $injector->addService('test', $testService);
-        $this->assertEquals($injector->inject('testFunction'), 3);
+        $this->assertEquals($injector->injectFunction('testFunction'), 3);
     }
 
     public function testInjectingMethod()
@@ -65,13 +66,13 @@ class InjectorTest extends PHPUnit_Framework_TestCase
         $injector = Injector::getInstance();
         $testService = new TestService(1, 2);
         $injector->addService('test', $testService);
-        $this->assertEquals($injector->inject([new TestClass(), 'testMethod']), 3);
+        $this->assertEquals($injector->injectMethod(new TestClass(), 'testMethod'), 3);
     }
 }
 
 
 //Test function to inject into
-function testFunction($test)
+function testFunction(TestService $test)
 {
     return $test->getFirst() + $test->getSecond();
 };
@@ -79,7 +80,7 @@ function testFunction($test)
 //Test class to inject into
 class TestClass
 {
-    public function testMethod($test)
+    public function testMethod(TestService $test)
     {
         return $test->getFirst() + $test->getSecond();
     }
@@ -91,7 +92,7 @@ class TestService
     private $first;
     private $second;
 
-    public function __construct($first='foo', $second='bar')
+    public function __construct($first, $second)
     {
         $this->first = $first;
         $this->second = $second;

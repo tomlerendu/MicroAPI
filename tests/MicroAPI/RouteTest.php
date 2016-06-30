@@ -1,8 +1,10 @@
 <?php
 
-use MicroAPI\Route;
+namespace TomLerendu\MicroAPITests;
 
-class RouteTest extends PHPUnit_Framework_TestCase
+use TomLerendu\MicroAPI\Route;
+
+class RouteTest extends \MicroAPITestCase
 {
     public function testGettingWildcards()
     {
@@ -33,7 +35,7 @@ class RouteTest extends PHPUnit_Framework_TestCase
 
     public function testGettingRequire()
     {
-        $object = new stdClass();
+        $object = new \stdClass();
 
         $route = new Route();
         $route->setRequire($object);
