@@ -3,75 +3,55 @@ namespace TomLerendu\MicroAPI;
 
 class Config
 {
+    private $defaults = [];
     private $config = [];
 
     /**
-     * Set a key and value in the config service
+     * Set a key and value in the config service.
      *
      * @param $key - The key the value should be stored under
      * @param $value - The value to store
      */
     public function set($key, $value)
     {
-        $key = explode('.', $key);
-        $ref = &$this->config;
-
-        for ($i=0; $i<count($key); $i++) {
-            $keyPart = $key[$i];
-
-            if ($i === count($key)-1)
-                $ref[$keyPart] = $value;
-            if (!isset($ref[$keyPart]))
-                $ref[$keyPart] = [];
-
-            $ref = &$ref[$keyPart];
-        }
+        $this->config[$key] = $value;
     }
 
     /**
-     * Retrieve a value from the config service using a given key
+     * Set a default key and value in the config service.
+     */
+    public function setDefault($key, $value)
+    {
+        $this->defaults[$key] = $value;
+    }
+
+    /**
+     * Retrieve a value or default value from the config service using a given key.
      *
      * @param $key - The key the value is stored under
      * @return mixed|null - The value or null if the key doesn't exist
      */
     public function get($key)
     {
-        $key = explode('.', $key);
-        $ref = &$this->config;
-
-        foreach ($key as $keyPart) {
-            if (isset($ref[$keyPart]))
-                $ref = &$ref[$keyPart];
-            else
-                return null;
+        if (isset($this->config[$key])) {
+            return $this->config[$key];
         }
 
-        return $ref;
+        if (isset($this->defaults[$key])) {
+            return $this->defaults[$key];
+        }
+
+        return null;
     }
 
     /**
      * Remove a value from the config service
      *
      * @param $key - The key of the value to be removed
-     * @return mixed|null - The value that was removed or null if the key doesn't exist
+     * @return null
      */
     public function remove($key)
     {
-        $key = explode('.', $key);
-        $ref = &$this->config;
-
-        for ($i=0; $i<count($key); $i++) {
-            $keyPart = $key[$i];
-
-            if ($i === count($key)-1) {
-                $value = $ref[$keyPart];
-                unset($ref[$keyPart]);
-                return $value;
-            }
-            elseif (isset($ref[$keyPart]))
-                $ref = &$ref[$keyPart];
-            else
-                return null;
-        }
+        unset($this->config[$key]);
     }
 }
