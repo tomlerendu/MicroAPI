@@ -12,7 +12,7 @@ class Injector
      *
      * @return Injector
      */
-    public static function getInstance()
+    public static function getInstance(): Injector
     {
         static $instance = null;
         if ($instance === null) {
