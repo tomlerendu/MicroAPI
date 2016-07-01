@@ -1,8 +1,6 @@
 <?php
 
-namespace TomLerendu\MicroAPI\Validator;
-
-use DateTime;
+namespace MicroAPI\Validator;
 
 trait Rules
 {

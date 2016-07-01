@@ -1,6 +1,6 @@
 <?php
 
-namespace TomLerendu\MicroAPI\Validator;
+namespace MicroAPI\Validator;
 
 class Validator
 {

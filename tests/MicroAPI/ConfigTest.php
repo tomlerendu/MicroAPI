@@ -1,8 +1,8 @@
 <?php
 
-namespace TomLerendu\MicroAPITests;
+namespace MicroAPITests;
 
-use TomLerendu\MicroAPI\Config;
+use \MicroAPI\Config;
 
 class ConfigTest extends \MicroAPITestCase
 {

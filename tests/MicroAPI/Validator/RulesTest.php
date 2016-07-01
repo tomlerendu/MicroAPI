@@ -1,8 +1,8 @@
 <?php
 
-namespace TomLerendu\MicroAPITests\Validator;
+namespace MicroAPITests\Validator;
 
-use TomLerendu\MicroAPI\Validator\Validator;
+use \MicroAPI\Validator\Validator;
 
 class RulesTest extends \MicroAPITestCase
 {

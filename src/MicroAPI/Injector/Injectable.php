@@ -1,12 +1,12 @@
 <?php
 
-namespace TomLerendu\MicroAPI\Injector;
+namespace MicroAPI\Injector;
 
 /**
- * A trait to inject services into an object
+ * A trait to inject services into an object.
  *
  * Class Injectable
- * @package TomLerendu\MicroAPI
+ * @package MicroAPI
  */
 trait Injectable
 {

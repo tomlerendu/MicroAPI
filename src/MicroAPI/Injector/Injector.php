@@ -1,8 +1,9 @@
 <?php
-namespace TomLerendu\MicroAPI\Injector;
+
+namespace MicroAPI\Injector;
 
 use ReflectionMethod;
-use TomLerendu\MicroAPI\Exception;
+use MicroAPI\Exception;
 
 class Injector
 {

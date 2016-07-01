@@ -1,8 +1,8 @@
 <?php
 
-namespace TomLerendu\MicroAPITests;
+namespace MicroAPITests;
 
-use TomLerendu\MicroAPI\Request;
+use \MicroAPI\Request;
 
 class RequestTest extends \MicroAPITestCase
 {

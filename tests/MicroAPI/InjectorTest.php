@@ -1,8 +1,8 @@
 <?php
 
-namespace TomLerendu\MicroAPITests;
+namespace MicroAPITests;
 
-use TomLerendu\MicroAPI\Injector\Injector;
+use \MicroAPI\Injector\Injector;
 
 class InjectorTest extends \MicroAPITestCase
 {

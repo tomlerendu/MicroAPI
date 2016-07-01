@@ -1,5 +1,6 @@
 <?php
-namespace TomLerendu\MicroAPI;
+
+namespace MicroAPI;
 
 use PDO;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace TomLerendu\MicroAPITests;
+namespace MicroAPITests;
 
-use TomLerendu\MicroAPI\Route;
+use \MicroAPI\Route;
 
 class RouteTest extends \MicroAPITestCase
 {
